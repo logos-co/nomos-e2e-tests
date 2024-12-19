@@ -15,9 +15,24 @@ def get_env_var(var_name, default=None):
 
 
 # Configuration constants. Need to be upercase to appear in reports
-DEFAULT_NOMOS = "nomos:latest"
+DEFAULT_NOMOS = {
+    "image": "nomos:latest",
+    "volumes": "./testnet:/etc/nomos,./tests/kzgrs/kzgrs_test_params:/kzgrs_test_params:z",
+    "ports": "3000/udp,18080/tcp",
+    "entrypoint": "/etc/nomos/scripts/run_nomos_node.sh",
+}
+NOMOS_EXECUTOR = {
+    "image": "nomos:latest",
+    "volumes": "./testnet:/etc/nomos,./tests/kzgrs/kzgrs_test_params:/kzgrs_test_params:z",
+    "ports": "3000/udp,18080/tcp",
+    "entrypoint": "/etc/nomos/scripts/run_nomos_executor.sh",
+}
+
+CFGSYNC = {"image": "nomos:latest", "volumes": "./testnet:/etc/nomos", "ports": "", "entrypoint": "/etc/nomos/scripts/run_cfgsync.sh"}
+
+CFGSYNC = get_env_var("CFGSYNC", CFGSYNC)
 NODE_1 = get_env_var("NODE_1", DEFAULT_NOMOS)
-NODE_2 = get_env_var("NODE_2", DEFAULT_NOMOS)
+NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)
 ADDITIONAL_NODES = get_env_var("ADDITIONAL_NODES", f"{DEFAULT_NOMOS},{DEFAULT_NOMOS}")
 # more nodes need to follow the NODE_X pattern
 DOCKER_LOG_DIR = get_env_var("DOCKER_LOG_DIR", "./log/docker")
