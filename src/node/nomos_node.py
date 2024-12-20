@@ -1,4 +1,3 @@
-import json
 import os
 
 from src.libs.custom_logger import get_custom_logger
@@ -23,7 +22,7 @@ def sanitize_docker_flags(input_flags):
 
 class NomosNode:
     def __init__(self, node_type, docker_log_prefix=""):
-        print(nomos_nodes)
+        logger.debug(f"Node is going to be initialized with this config {nomos_nodes[node_type]}")
         self._image_name = nomos_nodes[node_type]["image"]
         self._internal_ports = nomos_nodes[node_type]["ports"]
         self._volumes = nomos_nodes[node_type]["volumes"]
@@ -32,6 +31,7 @@ class NomosNode:
         self._log_path = os.path.join(DOCKER_LOG_DIR, f"{docker_log_prefix}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
         self._container = None
+
         logger.debug(f"NomosNode instance initialized with log path {self._log_path}")
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
@@ -39,10 +39,20 @@ class NomosNode:
         logger.debug("Starting Node...")
         self._docker_manager.create_network()
         self._ext_ip = self._docker_manager.generate_random_ext_ip()
-        self._ports = self._docker_manager.generate_ports(count=len(self._internal_ports))
-        self._udp_port = self._ports[0]
-        self._tcp_port = self._ports[1]
-        self._api = REST(self._tcp_port)
+
+        number_of_ports = len(self._internal_ports)
+        self._port_map = {}
+
+        if number_of_ports > 0:
+            self._external_ports = self._docker_manager.generate_ports(count=number_of_ports)
+            self._udp_port = self._external_ports[0]
+            self._tcp_port = self._external_ports[1]
+            self._api = REST(self._tcp_port)
+
+        logger.debug(f"Internal ports {self._internal_ports}")
+
+        for i, port in enumerate(self._internal_ports):
+            self._port_map[port] = int(self._external_ports[i])
 
         default_args = {
             "listen-address": "0.0.0.0",
@@ -52,9 +62,11 @@ class NomosNode:
 
         logger.debug(f"Using volumes {self._volumes}")
 
+        logger.debug(f"Port map {self._port_map}")
+
         self._container = self._docker_manager.start_container(
             self._docker_manager.image,
-            ports=self._ports,
+            ports=self._port_map,
             args=default_args,
             log_path=self._log_path,
             container_ip=self._ext_ip,
