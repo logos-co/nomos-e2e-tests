@@ -35,7 +35,7 @@ class DockerManager:
         logger.debug(f"Network {network_name} created")
         return network
 
-    def start_container(self, image_name, port_bindings, args, log_path, container_ip, volumes, remove_container=True):
+    def start_container(self, image_name, port_bindings, args, log_path, container_ip, volumes, entrypoint, remove_container=True):
         cli_args = []
         for key, value in args.items():
             if isinstance(value, list):  # Check if value is a list

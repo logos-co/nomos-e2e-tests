@@ -71,6 +71,7 @@ class NomosNode:
             log_path=self._log_path,
             container_ip=self._ext_ip,
             volumes=self._volumes,
+            entrypoint=self._entrypoint,
             remove_container=True,
         )
 
