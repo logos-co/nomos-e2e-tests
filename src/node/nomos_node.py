@@ -74,5 +74,5 @@ class NomosNode:
             entrypoint=self._entrypoint,
             remove_container=True,
         )
-
+        logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}")

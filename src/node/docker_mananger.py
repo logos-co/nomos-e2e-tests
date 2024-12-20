@@ -50,7 +50,14 @@ class DockerManager:
         cli_args_str_for_log = " ".join(cli_args)
         logger.debug(f"docker run -i -t {port_bindings} {image_name} {cli_args_str_for_log}")
         container = self._client.containers.run(
-            image_name, command=cli_args, ports=port_bindings, detach=True, remove=remove_container, auto_remove=remove_container, volumes=volumes
+            image_name,
+            command=cli_args,
+            ports=port_bindings,
+            detach=True,
+            remove=remove_container,
+            auto_remove=remove_container,
+            volumes=volumes,
+            entrypoint=entrypoint,
         )
 
         network = self._client.networks.get(NETWORK_NAME)
