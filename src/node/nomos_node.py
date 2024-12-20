@@ -66,7 +66,7 @@ class NomosNode:
 
         self._container = self._docker_manager.start_container(
             self._docker_manager.image,
-            ports=self._port_map,
+            port_bindings=self._port_map,
             args=default_args,
             log_path=self._log_path,
             container_ip=self._ext_ip,
