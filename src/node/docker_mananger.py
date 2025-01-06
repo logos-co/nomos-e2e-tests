@@ -112,7 +112,7 @@ class DockerManager:
 
     @staticmethod
     def generate_random_ext_ip():
-        base_ip_fragments = ["172", "18"]
+        base_ip_fragments = ["172", "19"]
         ext_ip = ".".join(base_ip_fragments + [str(random.randint(0, 255)) for _ in range(2)])
         logger.debug(f"Generated random external IP {ext_ip}")
         return ext_ip

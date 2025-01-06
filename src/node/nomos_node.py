@@ -32,6 +32,10 @@ class NomosNode:
         self._docker_manager = DockerManager(self._image_name)
         self._container = None
 
+        cwd = os.getcwd()
+        for i, volume in enumerate(self._volumes):
+            self._volumes[i] = cwd + "/" + volume
+
         logger.debug(f"NomosNode instance initialized with log path {self._log_path}")
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
