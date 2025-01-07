@@ -1,5 +1,6 @@
 import os
 
+from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -80,5 +81,28 @@ class NomosNode:
             remove_container=True,
             name=self._container_name,
         )
+
         logger.debug(f"Container returned  {self._container}")
-        logger.debug(f"Started container from image {self._image_name}")
+        logger.debug(f"Started container from image {self._image_name}. REST: {self._tcp_port}")
+
+        delay(10)
+        try:
+            self.ensure_ready(timeout_duration=wait_for_node_sec)
+        except Exception as ex:
+            logger.error(f"REST service did not become ready in time: {ex}")
+            raise
+
+    def ensure_ready(self, timeout_duration=10):
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
+        def check_ready(node=self):
+            node.info_response = node.status()
+            logger.info("REST service is ready !!")
+
+        if self.is_nomos():
+            check_ready()
+
+    def is_nomos(self):
+        return "nomos" in self._container_name
+
+    def status(self):
+        return self._api.status()
