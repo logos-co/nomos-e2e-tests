@@ -66,9 +66,6 @@ class DockerManager:
         # logger.debug(f"docker network connect --ip {container_ip} {NETWORK_NAME} {container.id}")
         # network.connect(container, ipv4_address=container_ip)
 
-        attrs = container.attrs
-        logger.debug(f"Container started with attributes {attrs}")
-
         logger.debug(f"Container started with ID {container.short_id}. Setting up logs at {log_path}")
         log_thread = threading.Thread(target=self._log_container_output, args=(container, log_path))
         log_thread.daemon = True
