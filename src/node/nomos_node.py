@@ -21,15 +21,16 @@ def sanitize_docker_flags(input_flags):
 
 
 class NomosNode:
-    def __init__(self, node_type, docker_log_prefix=""):
+    def __init__(self, node_type, container_name=""):
         logger.debug(f"Node is going to be initialized with this config {nomos_nodes[node_type]}")
         self._image_name = nomos_nodes[node_type]["image"]
         self._internal_ports = nomos_nodes[node_type]["ports"]
         self._volumes = nomos_nodes[node_type]["volumes"]
         self._entrypoint = nomos_nodes[node_type]["entrypoint"]
 
-        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{docker_log_prefix}__{self._image_name.replace('/', '_')}.log")
+        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
+        self._container_name = container_name
         self._container = None
 
         cwd = os.getcwd()
@@ -77,6 +78,7 @@ class NomosNode:
             volumes=self._volumes,
             entrypoint=self._entrypoint,
             remove_container=True,
+            name=self._container_name,
         )
         logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}")
