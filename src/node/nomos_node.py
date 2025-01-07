@@ -53,7 +53,7 @@ class NomosNode:
             self._external_ports = self._docker_manager.generate_ports(count=number_of_ports)
             self._udp_port = self._external_ports[0]
             self._tcp_port = self._external_ports[1]
-            self._api = REST(self._internal_ports[1].removesuffix("/tcp"))
+            self._api = REST(self._tcp_port)
 
         logger.debug(f"Internal ports {self._internal_ports}")
 
