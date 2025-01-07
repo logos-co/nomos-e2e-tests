@@ -83,10 +83,8 @@ class NomosNode:
         )
 
         logger.debug(f"Container returned  {self._container}")
-
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
 
-        delay(10)
         try:
             self.ensure_ready(timeout_duration=wait_for_node_sec)
         except Exception as ex:
