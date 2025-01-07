@@ -53,7 +53,7 @@ class NomosNode:
             self._external_ports = self._docker_manager.generate_ports(count=number_of_ports)
             self._udp_port = self._external_ports[0]
             self._tcp_port = self._external_ports[1]
-            self._api = REST(self._tcp_port)
+            self._api = REST(self._internal_ports[1])
 
         logger.debug(f"Internal ports {self._internal_ports}")
 
@@ -85,20 +85,16 @@ class NomosNode:
         logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
 
-        delay(1)
-
-        attached_ip = self._container.attrs["NetworkSettings"]["IPAddress"]
-        logger.debug(f"Container started with IP {attached_ip}")
-        # try:
-        #     self.ensure_ready(timeout_duration=wait_for_node_sec)
-        # except Exception as ex:
-        #     logger.error(f"REST service did not become ready in time: {ex}")
-        #     raise
+        try:
+            self.ensure_ready(timeout_duration=wait_for_node_sec)
+        except Exception as ex:
+            logger.error(f"REST service did not become ready in time: {ex}")
+            raise
 
     def ensure_ready(self, timeout_duration=10):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def check_ready(node=self):
-            node.info_response = node.status()
+            node.info_response = node.info()
             logger.info("REST service is ready !!")
 
         if self.is_nomos():
@@ -107,5 +103,5 @@ class NomosNode:
     def is_nomos(self):
         return "nomos" in self._container_name
 
-    def status(self):
-        return self._api.status()
+    def info(self):
+        return self._api.info()
