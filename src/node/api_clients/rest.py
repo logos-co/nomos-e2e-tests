@@ -21,5 +21,6 @@ class REST(BaseClient):
         return self.make_request(method, url, headers=headers, data=payload)
 
     def status(self):
-        info_response = self.rest_call("get", "cl/status")
-        return info_response.json()
+        status_response = self.rest_call("get", "cl/status")
+        logger.debug(f"Status response  {status_response}")
+        return status_response.json()
