@@ -60,11 +60,7 @@ class NomosNode:
         for i, port in enumerate(self._internal_ports):
             self._port_map[port] = int(self._external_ports[i])
 
-        default_args = {
-            "listen-address": "0.0.0.0",
-            "log-level": "info",
-            "nat": f"extip:{self._ext_ip}",
-        }
+        default_args = {}
 
         logger.debug(f"Using volumes {self._volumes}")
 
