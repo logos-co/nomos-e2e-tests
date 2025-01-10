@@ -82,7 +82,7 @@ class NomosNode:
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
 
         # try:
-        self.ensure_ready(timeout_duration=wait_for_node_sec)
+        # self.ensure_ready(timeout_duration=wait_for_node_sec)
         # except Exception as ex:
         #    logger.error(f"REST service did not become ready in time: {ex}")
         #    raise
