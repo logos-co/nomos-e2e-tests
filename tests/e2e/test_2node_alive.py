@@ -17,7 +17,6 @@ class Test2NodeClAlive:
         self.node2.start()
         self.node3.start()
 
-        self.node1.ensure_ready()
         try:
             self.node2.ensure_ready()
             self.node3.ensure_ready()
