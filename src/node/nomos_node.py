@@ -81,12 +81,6 @@ class NomosNode:
         logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
 
-        # try:
-        # self.ensure_ready(timeout_duration=wait_for_node_sec)
-        # except Exception as ex:
-        #    logger.error(f"REST service did not become ready in time: {ex}")
-        #    raise
-
     def ensure_ready(self, timeout_duration=10):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def check_ready(node=self):
