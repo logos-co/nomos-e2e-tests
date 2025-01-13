@@ -1,6 +1,5 @@
 import os
 
-from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -71,10 +70,9 @@ class NomosNode:
             port_bindings=self._port_map,
             args=default_args,
             log_path=self._log_path,
-            container_ip=self._ext_ip,
             volumes=self._volumes,
             entrypoint=self._entrypoint,
-            remove_container=False,
+            remove_container=True,
             name=self._container_name,
         )
 

@@ -35,7 +35,7 @@ class DockerManager:
         logger.debug(f"Network {network_name} created")
         return network
 
-    def start_container(self, image_name, port_bindings, args, log_path, container_ip, volumes, entrypoint, remove_container=True, name=None):
+    def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, remove_container=True, name=None):
         cli_args = []
         for key, value in args.items():
             if isinstance(value, list):  # Check if value is a list
@@ -45,8 +45,6 @@ class DockerManager:
             else:
                 cli_args.append(f"--{key}={value}")  # Add a single command
 
-        # port_bindings = {f"{port}/tcp": ("", port) for port in ports}
-        # port_bindings_for_log = " ".join(f"-p {port}:{port}" for port in ports)
         cli_args_str_for_log = " ".join(cli_args)
         logger.debug(f"docker run -i -t {port_bindings} {image_name} {cli_args_str_for_log}")
         container = self._client.containers.run(
@@ -61,10 +59,6 @@ class DockerManager:
             name=name,
             network=NETWORK_NAME,
         )
-
-        # network = self._client.networks.get(NETWORK_NAME)
-        # logger.debug(f"docker network connect --ip {container_ip} {NETWORK_NAME} {container.id}")
-        # network.connect(container, ipv4_address=container_ip)
 
         logger.debug(f"Container started with ID {container.short_id}. Setting up logs at {log_path}")
         log_thread = threading.Thread(target=self._log_container_output, args=(container, log_path))
