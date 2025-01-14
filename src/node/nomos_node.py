@@ -1,5 +1,6 @@
 import os
 
+from src.data_storage import DS
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -7,6 +8,7 @@ from src.node.api_clients.rest import REST
 from src.node.docker_mananger import DockerManager
 from src.env_vars import DOCKER_LOG_DIR
 from src.node.node_vars import nomos_nodes
+from src.test_data import LOG_ERROR_KEYWORDS
 
 logger = get_custom_logger(__name__)
 
@@ -76,8 +78,9 @@ class NomosNode:
             name=self._container_name,
         )
 
-        logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
+
+        DS.nomos_nodes.append(self)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
@@ -132,3 +135,13 @@ class NomosNode:
 
     def info(self):
         return self._api.info()
+
+    def check_nomos_log_errors(self, whitelist=None):
+        keywords = LOG_ERROR_KEYWORDS
+
+        # If a whitelist is provided, remove those keywords from the keywords list
+        if whitelist:
+            keywords = [keyword for keyword in keywords if keyword not in whitelist]
+
+        matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
+        assert not matches, f"Found errors {matches}"

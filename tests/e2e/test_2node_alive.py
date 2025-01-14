@@ -22,7 +22,3 @@ class Test2NodeClAlive:
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
-
-        self.node1.stop()
-        self.node2.stop()
-        self.node3.stop()
