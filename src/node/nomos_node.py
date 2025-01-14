@@ -79,6 +79,45 @@ class NomosNode:
         logger.debug(f"Container returned  {self._container}")
         logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
 
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
+    def stop(self):
+        if self._container:
+            logger.debug(f"Stopping container with id {self._container.short_id}")
+            self._container.stop()
+            try:
+                self._container.remove()
+            except:
+                pass
+            self._container = None
+            logger.debug("Container stopped.")
+
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
+    def kill(self):
+        if self._container:
+            logger.debug(f"Killing container with id {self._container.short_id}")
+            self._container.kill()
+            try:
+                self._container.remove()
+            except:
+                pass
+            self._container = None
+            logger.debug("Container killed.")
+
+    def restart(self):
+        if self._container:
+            logger.debug(f"Restarting container with id {self._container.short_id}")
+            self._container.restart()
+
+    def pause(self):
+        if self._container:
+            logger.debug(f"Pausing container with id {self._container.short_id}")
+            self._container.pause()
+
+    def unpause(self):
+        if self._container:
+            logger.debug(f"Unpause container with id {self._container.short_id}")
+            self._container.unpause()
+
     def ensure_ready(self, timeout_duration=10):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def check_ready(node=self):
