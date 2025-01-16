@@ -20,6 +20,6 @@ class REST(BaseClient):
         headers = {"accept": "text/plain"}
         return self.make_request(method, url, headers=headers, data=payload)
 
-    def status(self):
-        info_response = self.rest_call("get", "cl/status")
-        return info_response.json()
+    def info(self):
+        status_response = self.rest_call("get", "cryptarchia/info")
+        return status_response.json()

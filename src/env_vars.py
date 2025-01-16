@@ -15,10 +15,15 @@ def get_env_var(var_name, default=None):
 
 
 # Configuration constants. Need to be upercase to appear in reports
-DEFAULT_NOMOS = "nomos:latest"
-NODE_1 = get_env_var("NODE_1", DEFAULT_NOMOS)
-NODE_2 = get_env_var("NODE_2", DEFAULT_NOMOS)
-ADDITIONAL_NODES = get_env_var("ADDITIONAL_NODES", f"{DEFAULT_NOMOS},{DEFAULT_NOMOS}")
+NOMOS = "nomos"
+NOMOS_EXECUTOR = "nomos_executor"
+CFGSYNC = "cfgsync"
+
+NODE_1 = get_env_var("NODE_1", NOMOS)
+NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)
+NODE_3 = get_env_var("NODE_3", CFGSYNC)
+
+ADDITIONAL_NODES = get_env_var("ADDITIONAL_NODES", f"{NOMOS},{NOMOS}")
 # more nodes need to follow the NODE_X pattern
 DOCKER_LOG_DIR = get_env_var("DOCKER_LOG_DIR", "./log/docker")
 NETWORK_NAME = get_env_var("NETWORK_NAME", "nomos")
