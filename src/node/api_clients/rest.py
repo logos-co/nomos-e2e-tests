@@ -24,8 +24,8 @@ class REST(BaseClient):
         status_response = self.rest_call("get", "cryptarchia/info")
         return status_response.json()
 
-    def disperse_data(self, dispersal_request):
-        return self.rest_call("post", "disperse-data", json.dumps(dispersal_request))
+    def send_dispersal_request(self, data):
+        return self.rest_call("post", "disperse-data", json.dumps(data))
 
     def get_range(self, app_id, data_range):
-        return self.rest_call("post", "da/get-range", json.dumps({app_id, data_range}))
+        return self.rest_call("post", "da/get-range", json.dumps({"app_id": app_id, "data_range": data_range}))

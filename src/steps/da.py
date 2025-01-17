@@ -1,0 +1,19 @@
+import allure
+
+from src.steps.common import StepsCommon
+
+
+def prepare_dispersal_data(data):
+    dispersal_data = {"data": data, "metadata": {"app_id": 10, "index": 0}}
+    return dispersal_data
+
+
+class StepsDataAvailability(StepsCommon):
+
+    @allure.step
+    def disperse_data(self, data):
+        dispersal_data = prepare_dispersal_data(data)
+        try:
+            self.node3.send_dispersal_request(dispersal_data)
+        except Exception as ex:
+            assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)

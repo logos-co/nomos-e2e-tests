@@ -24,3 +24,13 @@ LOG_ERROR_KEYWORDS = [
     "race condition",
     "double free",
 ]
+
+DATA_TO_DISPERSE = {
+    "Hello World!",
+    "1234567890",
+    '{"key": "value"}',
+    "这是一些中文",
+    "🚀🌟✨",
+    "Lorem ipsum dolor sit amet",
+    "<html><body>Hello</body></html>",
+}

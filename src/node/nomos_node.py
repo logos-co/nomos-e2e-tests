@@ -145,3 +145,6 @@ class NomosNode:
 
         matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
         assert not matches, f"Found errors {matches}"
+
+    def send_dispersal_request(self, data):
+        return self._api.send_dispersal_request(data)
