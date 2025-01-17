@@ -5,7 +5,7 @@ from src.steps.common import StepsCommon
 
 def prepare_dispersal_data(data):
     data_bytes = data.encode("utf-8")
-    dispersal_data = {"data": list(data_bytes), "metadata": {"app_id": 10, "index": 0}}
+    dispersal_data = {"data": list(data_bytes), "metadata": {"app_id": [1] + [0] * 31, "index": 0}}
     return dispersal_data
 
 
