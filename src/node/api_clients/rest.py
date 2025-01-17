@@ -27,5 +27,5 @@ class REST(BaseClient):
     def send_dispersal_request(self, data):
         return self.rest_call("post", "disperse-data", json.dumps(data))
 
-    def get_range(self, app_id, data_range):
-        return self.rest_call("post", "da/get-range", json.dumps({"app_id": app_id, "data_range": data_range}))
+    def send_get_range(self, query):
+        return self.rest_call("post", "da/get-range", json.dumps(query))
