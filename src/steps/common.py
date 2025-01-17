@@ -10,6 +10,11 @@ logger = get_custom_logger(__name__)
 
 
 class StepsCommon:
+    @pytest.fixture(scope="function", autouse=True)
+    def cluster_setup(self):
+        logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
+        self.main_nodes = []
+
     @pytest.fixture(scope="function")
     def setup_main_nodes(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
