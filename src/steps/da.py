@@ -5,7 +5,7 @@ from src.steps.common import StepsCommon
 
 def prepare_dispersal_request(data, app_id, index):
     data_bytes = data.encode("utf-8")
-    dispersal_data = {"data": list(data_bytes), "metadata": {"app_id": [1] + [0] * 31, "index": [0] * 8}}
+    dispersal_data = {"data": list(data_bytes), "metadata": {"app_id": app_id, "index": index}}
     return dispersal_data
 
 
@@ -18,7 +18,7 @@ class StepsDataAvailability(StepsCommon):
 
     @allure.step
     def disperse_data(self, data, app_id, index):
-        request = prepare_dispersal_request(data)
+        request = prepare_dispersal_request(data, app_id, index)
         try:
             self.node3.send_dispersal_request(request)
         except Exception as ex:
