@@ -25,7 +25,7 @@ LOG_ERROR_KEYWORDS = [
     "double free",
 ]
 
-DATA_TO_DISPERSE = {
+DATA_TO_DISPERSE = [
     "Hello World!",
     "1234567890",
     '{"key": "value"}',
@@ -33,4 +33,4 @@ DATA_TO_DISPERSE = {
     "🚀🌟✨",
     "Lorem ipsum dolor sit amet",
     "<html><body>Hello</body></html>",
-}
+]
