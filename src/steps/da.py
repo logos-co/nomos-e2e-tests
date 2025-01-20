@@ -28,15 +28,13 @@ class StepsDataAvailability(StepsCommon):
 
     @allure.step
     def get_data_range(self, app_id, start, end):
-        response_bytes = []
+        response = []
         query = prepare_get_range_request(app_id, start, end)
         try:
-            response_bytes = self.node2.send_get_data_range_request(query)
+            response = self.node2.send_get_data_range_request(query)
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
         # Extract data as a string for each index in the received order
-        parsed_data = []
-        for item in response_bytes.content:
-            parsed_data.append(item)
+        parsed_data = json.loads(response)
         return parsed_data

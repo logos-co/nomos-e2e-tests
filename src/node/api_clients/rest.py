@@ -28,4 +28,5 @@ class REST(BaseClient):
         return self.rest_call("post", "disperse-data", json.dumps(data))
 
     def send_get_range(self, query):
-        return self.rest_call("post", "da/get-range", json.dumps(query))
+        response = self.rest_call("post", "da/get-range", json.dumps(query))
+        return response.json()
