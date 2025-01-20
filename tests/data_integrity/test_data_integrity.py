@@ -15,4 +15,4 @@ class TestDataIntegrity(StepsDataAvailability):
     def test_da_sampling_determines_data_presence(self):
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
         received_data = self.get_data_range([0] * 31 + [1], [0] * 8, [0] * 7 + [5])
-        assert DATA_TO_DISPERSE[0] == received_data
+        assert DATA_TO_DISPERSE[0] == received_data[0].decode("utf-8")
