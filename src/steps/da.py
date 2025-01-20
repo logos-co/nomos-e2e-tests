@@ -35,7 +35,8 @@ class StepsDataAvailability(StepsCommon):
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
-        # Extract data ss string for each index in the received order
-        response = response_bytes.decode("utf-8")
-        parsed_data = json.loads(response)
-        return [item[1] for item in parsed_data]
+        # Extract data as a string for each index in the received order
+        parsed_data = []
+        for item in response_bytes.content:
+            parsed_data.append(item.decode("utf-8"))
+        return parsed_data
