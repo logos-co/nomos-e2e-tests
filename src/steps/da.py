@@ -36,5 +36,5 @@ class StepsDataAvailability(StepsCommon):
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
         # Extract data as a string for each index in the received order
-        parsed_data = json.loads(response)
-        return parsed_data
+        # parsed_data = json.loads(response)
+        return response
