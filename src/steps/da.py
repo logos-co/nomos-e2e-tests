@@ -1,3 +1,5 @@
+import json
+
 import allure
 
 from src.steps.common import StepsCommon
@@ -26,16 +28,14 @@ class StepsDataAvailability(StepsCommon):
 
     @allure.step
     def get_data_range(self, app_id, start, end):
-        response = []
+        response_bytes = []
         query = prepare_get_range_request(app_id, start, end)
         try:
-            response = self.node2.send_get_data_range_request(query)
+            response_bytes = self.node2.send_get_data_range_request(query)
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
-        # Extract data for each index in received order
-        extracted_data = []
-        for item in response:
-            extracted_data.append(item[1])
-
-        return extracted_data
+        # Extract data ss string for each index in the received order
+        response = response_bytes.decode("utf-8")
+        parsed_data = json.loads(response)
+        return [item[1] for item in parsed_data]
