@@ -38,5 +38,5 @@ class StepsDataAvailability(StepsCommon):
         # Extract data as a string for each index in the received order
         parsed_data = []
         for item in response_bytes.content:
-            parsed_data.append(item.decode("utf-8"))
+            parsed_data.append(item)
         return parsed_data
