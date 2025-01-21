@@ -16,7 +16,7 @@ class StepsCommon:
         self.main_nodes = []
 
     @pytest.fixture(scope="function")
-    def setup_main_nodes(self, request):
+    def setup_2_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")

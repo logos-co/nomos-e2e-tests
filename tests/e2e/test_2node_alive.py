@@ -9,6 +9,6 @@ logger = get_custom_logger(__name__)
 
 
 class Test2NodeClAlive(StepsCommon):
-    @pytest.mark.usefixtures("setup_main_nodes")
+    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_cluster_start(self):
         logger.debug("Two node cluster started successfully!")
