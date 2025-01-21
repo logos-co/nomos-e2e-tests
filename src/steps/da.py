@@ -2,6 +2,7 @@ import json
 
 import allure
 
+from src.env_vars import NOMOS_EXECUTOR
 from src.steps.common import StepsCommon
 
 
@@ -18,11 +19,19 @@ def prepare_get_range_request(app_id, start_index, end_index):
 
 class StepsDataAvailability(StepsCommon):
 
+    def find_executor_node(self):
+        executor = {}
+        for node in self.main_nodes:
+            if node.node_type() == NOMOS_EXECUTOR:
+                executor = node
+        return executor
+
     @allure.step
     def disperse_data(self, data, app_id, index):
         request = prepare_dispersal_request(data, app_id, index)
+        executor = self.find_executor_node()
         try:
-            self.node3.send_dispersal_request(request)
+            executor.send_dispersal_request(request)
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 

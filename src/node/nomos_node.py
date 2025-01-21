@@ -29,6 +29,7 @@ class NomosNode:
         self._internal_ports = nomos_nodes[node_type]["ports"]
         self._volumes = nomos_nodes[node_type]["volumes"]
         self._entrypoint = nomos_nodes[node_type]["entrypoint"]
+        self._node_type = node_type
 
         self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
@@ -36,12 +37,8 @@ class NomosNode:
         self._container = None
 
         cwd = os.getcwd()
-        updated_volumes = []
-        for i, volume in enumerate(self._volumes):
-            updated_volumes.append(cwd + "/" + volume)
-        self._volumes = updated_volumes
+        self._volumes = [cwd + "/" + volume for volume in self._volumes]
 
-        logger.debug(f"NomosNode instance initialized with volumes {self._volumes}")
         logger.debug(f"NomosNode instance initialized with log path {self._log_path}")
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
@@ -138,6 +135,9 @@ class NomosNode:
 
     def info(self):
         return self._api.info()
+
+    def node_type(self):
+        return self._node_type
 
     def check_nomos_log_errors(self, whitelist=None):
         keywords = LOG_ERROR_KEYWORDS
