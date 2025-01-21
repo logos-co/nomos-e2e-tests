@@ -36,9 +36,12 @@ class NomosNode:
         self._container = None
 
         cwd = os.getcwd()
+        updated_volumes = []
         for i, volume in enumerate(self._volumes):
-            self._volumes[i] = cwd + "/" + volume
+            updated_volumes.append(cwd + "/" + volume)
+        self._volumes = updated_volumes
 
+        logger.debug(f"NomosNode instance initialized with volumes {self._volumes}")
         logger.debug(f"NomosNode instance initialized with log path {self._log_path}")
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
