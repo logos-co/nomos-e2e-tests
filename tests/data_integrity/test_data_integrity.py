@@ -10,6 +10,7 @@ logger = get_custom_logger(__name__)
 class TestDataIntegrity(StepsDataAvailability):
     main_nodes = []
 
+    @pytest.mark.usefixtures("setup_5_node_cluster")
     def test_da_identify_retrieve_missing_columns(self):
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
 
