@@ -1,5 +1,3 @@
-import json
-
 import allure
 
 from src.env_vars import NOMOS_EXECUTOR
