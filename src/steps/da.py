@@ -4,9 +4,29 @@ from src.env_vars import NOMOS_EXECUTOR
 from src.steps.common import StepsCommon
 
 
+def add_padding(orig_bytes):
+    block_size = 31
+    """
+    Pads a list of bytes (integers in [0..255]) using a PKCS#7-like scheme:
+    - The value of each padded byte is the number of bytes padded.
+    - If the original data is already a multiple of the block size,
+      an additional full block of bytes (each the block size) is added.
+    """
+    original_len = len(orig_bytes)
+    padding_needed = block_size - (original_len % block_size)
+    # If the data is already a multiple of block_size, add a full block of padding
+    if padding_needed == 0:
+        padding_needed = block_size
+
+    # Each padded byte will be equal to padding_needed
+    padded_bytes = orig_bytes + [padding_needed] * padding_needed
+    return padded_bytes
+
+
 def prepare_dispersal_request(data, app_id, index):
     data_bytes = data.encode("utf-8")
-    dispersal_data = {"data": list(data_bytes), "metadata": {"app_id": app_id, "index": index}}
+    padded_bytes = add_padding(list(data_bytes))
+    dispersal_data = {"data": padded_bytes, "metadata": {"app_id": app_id, "index": index}}
     return dispersal_data
 
 
