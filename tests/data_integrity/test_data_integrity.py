@@ -1,10 +1,7 @@
 import pytest
 
-from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability
 from src.test_data import DATA_TO_DISPERSE
-
-logger = get_custom_logger(__name__)
 
 
 class TestDataIntegrity(StepsDataAvailability):
