@@ -7,6 +7,7 @@ from src.test_data import DATA_TO_DISPERSE
 class TestDataIntegrity(StepsDataAvailability):
     main_nodes = []
 
+    @pytest.mark.skip(reason="Waiting for PR https://github.com/logos-co/nomos-node/pull/994")
     @pytest.mark.usefixtures("setup_5_node_cluster")
     def test_da_identify_retrieve_missing_columns(self):
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
@@ -20,6 +21,7 @@ class TestDataIntegrity(StepsDataAvailability):
         reconstructed_data = []
         assert DATA_TO_DISPERSE[0] == bytes(reconstructed_data).decode("utf-8")
 
+    @pytest.mark.skip(reason="Waiting for Nomos testnet images could evolve blockchain")
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
