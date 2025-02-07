@@ -3,6 +3,7 @@ import subprocess
 
 import pytest
 
+from src.cli.nomos_cli import NomosCli
 from src.env_vars import NOMOS_CLI
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
@@ -35,17 +36,8 @@ class TestDataIntegrity(StepsDataAvailability):
         delay(10)
         received_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
         rcv_data_json = json.dumps(received_data)
-        cmd = str(NOMOS_CLI + " reconstruct --app-blobs " + "'" + str(rcv_data_json) + "'")
-
-        logger.debug(f"Command to run {cmd}")
-
-        cmd_type = type(cmd)
-        logger.debug(f"Command type {cmd_type}")
-
-        try:
-            completed_cmd = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
-            logger.debug(f"Command finished with output {completed_cmd.stdout}")
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Error occurred while running nomos-cli {e.stderr}")
+        # cmd = str(NOMOS_CLI + " reconstruct --app-blobs " + "'" + str(rcv_data_json) + "'")
+        cli = NomosCli(command="reconstruct")
+        cli.run(input_values=[str(rcv_data_json)])
 
         # assert DATA_TO_DISPERSE[0] == bytes(received_data[0][1]).decode("utf-8")

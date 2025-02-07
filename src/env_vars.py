@@ -27,7 +27,7 @@ NODE_3 = get_env_var("NODE_3", CFGSYNC)
 
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_IMAGE)
 
-NOMOS_CLI = 'docker run --rm --entrypoint "" ' + NOMOS_IMAGE + " /usr/bin/nomos-cli"
+NOMOS_CLI = "/usr/bin/nomos-cli"
 
 ADDITIONAL_NODES = get_env_var("ADDITIONAL_NODES", f"{NOMOS},{NOMOS}")
 # more nodes need to follow the NODE_X pattern

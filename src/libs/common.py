@@ -1,3 +1,5 @@
+import random
+import string
 import uuid
 from datetime import datetime
 from time import sleep
@@ -20,3 +22,7 @@ def delay(num_seconds):
 
 def gen_step_id():
     return f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}__{str(uuid.uuid4())}"
+
+
+def generate_log_prefix():
+    return "".join(random.choices(string.ascii_lowercase, k=4))

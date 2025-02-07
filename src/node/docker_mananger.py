@@ -35,15 +35,18 @@ class DockerManager:
         logger.debug(f"Network {network_name} created")
         return network
 
-    def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, remove_container=True, name=None):
-        cli_args = []
-        for key, value in args.items():
-            if isinstance(value, list):  # Check if value is a list
-                cli_args.extend([f"--{key}={item}" for item in value])  # Add a command for each item in the list
-            elif value is None:
-                cli_args.append(f"{key}")  # Add simple command as it is passed in the key
-            else:
-                cli_args.append(f"--{key}={value}")  # Add a single command
+    def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, remove_container=True, name=None, command=None):
+        if command is None:
+            cli_args = []
+            for key, value in args.items():
+                if isinstance(value, list):  # Check if value is a list
+                    cli_args.extend([f"--{key}={item}" for item in value])  # Add a command for each item in the list
+                elif value is None:
+                    cli_args.append(f"{key}")  # Add simple command as it is passed in the key
+                else:
+                    cli_args.append(f"--{key}={value}")  # Add a single command
+        else:
+            cli_args = command
 
         cli_args_str_for_log = " ".join(cli_args)
         logger.debug(f"docker run -i -t {port_bindings} {image_name} {cli_args_str_for_log}")
