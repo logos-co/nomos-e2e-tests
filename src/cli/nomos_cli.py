@@ -32,27 +32,28 @@ class NomosCli:
     def run(self, input_values=None, **kwargs):
         logger.debug(f"NomosCli initialized with log path {self._log_path}")
 
+        self._port_map = {}
+
         cmd = [NOMOS_CLI, self._command]
         for flag in nomos_cli[self._command]["flags"]:
-            for f, indexes in flag:
-                flag_values_str = f
-                for j in range(len(indexes)):
-                    flag_values_str = flag_values_str + "'" + input_values[j] + "'"
-                cmd = cmd + flag_values_str
+            for f, indexes in flag.items():
+                cmd.append(f)
+                for j in indexes:
+                    cmd.append(input_values[j])
 
         logger.debug(f"NomosCli command to run {cmd}")
 
-        # self._container = self._docker_manager.start_container(
-        #     self._docker_manager.image,
-        #     port_bindings=self._port_map,
-        #     args=None,
-        #     log_path=self._log_path,
-        #     volumes=self._volumes,
-        #     entrypoint=self._entrypoint,
-        #     remove_container=True,
-        #     name=self._container_name,
-        #     command=cmd
-        # )
+        self._container = self._docker_manager.start_container(
+            self._docker_manager.image,
+            port_bindings=self._port_map,
+            args=None,
+            log_path=self._log_path,
+            volumes=self._volumes,
+            entrypoint=self._entrypoint,
+            remove_container=True,
+            name=self._container_name,
+            command=cmd,
+        )
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
