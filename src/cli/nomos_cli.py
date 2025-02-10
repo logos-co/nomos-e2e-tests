@@ -5,7 +5,7 @@ from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.cli.cli_vars import nomos_cli
-from src.node.docker_mananger import DockerManager
+from src.docker_manager import DockerManager
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
 
 logger = get_custom_logger(__name__)
