@@ -50,18 +50,22 @@ class DockerManager:
 
         cli_args_str_for_log = " ".join(cli_args)
         logger.debug(f"docker run -i -t {port_bindings} {image_name} {cli_args_str_for_log}")
-        container = self._client.containers.run(
-            image_name,
-            command=cli_args,
-            ports=port_bindings,
-            detach=True,
-            remove=remove_container,
-            auto_remove=remove_container,
-            volumes=volumes,
-            entrypoint=entrypoint,
-            name=name,
-            network=NETWORK_NAME,
-        )
+
+        try:
+            container = self._client.containers.run(
+                image_name,
+                command=cli_args,
+                ports=port_bindings,
+                detach=True,
+                remove=remove_container,
+                auto_remove=remove_container,
+                volumes=volumes,
+                entrypoint=entrypoint,
+                name=name,
+                network=NETWORK_NAME,
+            )
+        except Exception as ex:
+            logger.debug(f"Docker container run failed with exception {ex}")
 
         logger.debug(f"Container started with ID {container.short_id}. Setting up logs at {log_path}")
         log_thread = threading.Thread(target=self._log_container_output, args=(container, log_path))
@@ -128,19 +132,32 @@ class DockerManager:
     def image(self):
         return self._image
 
-    def search_log_for_keywords(self, log_path, keywords, use_regex=False):
+    def find_keywords_in_line(self, keywords, line, use_regex=False):
         matches = {keyword: [] for keyword in keywords}
 
-        # Open the log file and search line by line
-        with open(log_path, "r") as log_file:
-            for line in log_file:
-                for keyword in keywords:
-                    if use_regex:
-                        if re.search(keyword, line, re.IGNORECASE):
-                            matches[keyword].append(line.strip())
-                    else:
-                        if keyword.lower() in line.lower():
-                            matches[keyword].append(line.strip())
+        for keyword in keywords:
+            if use_regex:
+                if re.search(keyword, line, re.IGNORECASE):
+                    matches[keyword].append(line.strip())
+            else:
+                if keyword.lower() in line.lower():
+                    matches[keyword].append(line.strip())
+
+        return matches
+
+    def search_log_for_keywords(self, log_path, keywords, use_regex=False, log_stream=None):
+        matches = {}
+
+        # Read from stream
+        if log_stream is not None:
+            for line in log_stream:
+                matches = self.find_keywords_in_line(keywords, line.decode("utf-8"), use_regex=use_regex)
+
+        else:
+            # Open the log file and search line by line
+            with open(log_path, "r") as log_file:
+                for line in log_file:
+                    matches = self.find_keywords_in_line(keywords, line, use_regex=use_regex)
 
         # Check if there were any matches
         if any(matches[keyword] for keyword in keywords):
@@ -149,5 +166,5 @@ class DockerManager:
                     logger.debug(f"Found matches for keyword '{keyword}': {lines}")
             return matches
         else:
-            logger.debug("No errors found in the nomos logs.")
+            logger.debug("No keywords found in the nomos logs.")
             return None

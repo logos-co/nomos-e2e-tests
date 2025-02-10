@@ -1,5 +1,6 @@
 import os
 
+from src.data_storage import DS
 from src.libs.common import generate_log_prefix
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
@@ -55,6 +56,20 @@ class NomosCli:
             command=cmd,
         )
 
+        DS.nomos_nodes.append(self)
+
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
+    def stop(self):
+        if self._container:
+            logger.debug(f"Stopping container with id {self._container.short_id}")
+            self._container.stop()
+            try:
+                self._container.remove()
+            except:
+                pass
+            self._container = None
+            logger.debug("Container stopped.")
+
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
         if self._container:
@@ -66,3 +81,15 @@ class NomosCli:
                 pass
             self._container = None
             logger.debug("Container killed.")
+
+    def get_reconstruct_result(self):
+        keywords = ["Reconstructed data"]
+
+        log_stream = self._container.logs(stream=True)
+
+        matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False, log_stream)
+        # assert not matches, f"Reconstructed data not found {matches}"
+        for match in matches:
+            logger.debug(f"match {match}\n\n\n")
+
+        DS.nomos_nodes.remove(self)
