@@ -1,7 +1,6 @@
 from src.libs.custom_logger import get_custom_logger
 import json
-from urllib.parse import quote
-from src.node.api_clients.base_client import BaseClient
+from src.api_clients.base_client import BaseClient
 
 logger = get_custom_logger(__name__)
 

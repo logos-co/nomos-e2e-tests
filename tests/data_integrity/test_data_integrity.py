@@ -1,10 +1,8 @@
 import json
-import subprocess
 
 import pytest
 
 from src.cli.nomos_cli import NomosCli
-from src.env_vars import NOMOS_CLI
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability

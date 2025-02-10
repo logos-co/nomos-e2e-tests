@@ -4,7 +4,7 @@ from src.data_storage import DS
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
-from src.node.api_clients.rest import REST
+from src.api_clients.rest import REST
 from src.node.docker_mananger import DockerManager
 from src.env_vars import DOCKER_LOG_DIR
 from src.node.node_vars import nomos_nodes
