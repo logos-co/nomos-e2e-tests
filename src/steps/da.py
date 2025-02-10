@@ -1,4 +1,5 @@
 import allure
+from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.env_vars import NOMOS_EXECUTOR
 from src.steps.common import StepsCommon
@@ -45,13 +46,11 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
+    @retry(stop=stop_after_delay(20), wait=wait_fixed(0.1), reraise=True)
     def disperse_data(self, data, app_id, index):
         request = prepare_dispersal_request(data, app_id, index)
         executor = self.find_executor_node()
-        try:
-            executor.send_dispersal_request(request)
-        except Exception as ex:
-            assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+        executor.send_dispersal_request(request)
 
     @allure.step
     def get_data_range(self, node, app_id, start, end):

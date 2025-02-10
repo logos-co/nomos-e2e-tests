@@ -12,12 +12,12 @@ class REST(BaseClient):
 
     def rest_call(self, method, endpoint, payload=None):
         url = f"http://127.0.0.1:{self._rest_port}/{endpoint}"
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json", "Connection": "close"}
         return self.make_request(method, url, headers=headers, data=payload)
 
     def rest_call_text(self, method, endpoint, payload=None):
         url = f"http://127.0.0.1:{self._rest_port}/{endpoint}"
-        headers = {"accept": "text/plain"}
+        headers = {"accept": "text/plain", "Connection": "close"}
         return self.make_request(method, url, headers=headers, data=payload)
 
     def info(self):

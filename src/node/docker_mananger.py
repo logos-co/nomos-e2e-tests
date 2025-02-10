@@ -36,8 +36,8 @@ class DockerManager:
         return network
 
     def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, remove_container=True, name=None, command=None):
+        cli_args = []
         if command is None:
-            cli_args = []
             for key, value in args.items():
                 if isinstance(value, list):  # Check if value is a list
                     cli_args.extend([f"--{key}={item}" for item in value])  # Add a command for each item in the list

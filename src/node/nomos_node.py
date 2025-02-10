@@ -43,7 +43,7 @@ class NomosNode:
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
     def start(self, wait_for_node_sec=120, **kwargs):
-        logger.debug("Starting Node...")
+        logger.debug(f"Starting Node {self._container_name}")
         self._docker_manager.create_network()
         self._ext_ip = self._docker_manager.generate_random_ext_ip()
 
