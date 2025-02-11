@@ -35,7 +35,6 @@ class TestDataIntegrity(StepsDataAvailability):
         received_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
         rcv_data_json = json.dumps(received_data)
         cli = NomosCli(command="reconstruct")
-        cli.run(input_values=[str(rcv_data_json)])
-        cli.get_reconstruct_result()
+        decoded_data = cli.run_reconstruct(input_values=[rcv_data_json])
 
-        # assert DATA_TO_DISPERSE[0] == bytes(received_data[0][1]).decode("utf-8")
+        assert DATA_TO_DISPERSE[0] == decoded_data, "Retrieved data are not same with original data"

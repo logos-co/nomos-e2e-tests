@@ -24,6 +24,29 @@ def add_padding(orig_bytes):
     return padded_bytes
 
 
+def remove_padding(padded_bytes):
+    """
+    Removes PKCS#7-like padding from a list of bytes.
+    Raises:
+        ValueError: If the padding is incorrect.
+
+    Returns:
+        The original list of bytes without padding.
+    """
+    if not padded_bytes:
+        raise ValueError("The input is empty, cannot remove padding.")
+
+    padding_len = padded_bytes[-1]
+
+    if padding_len < 1 or padding_len > 31:
+        raise ValueError("Invalid padding length.")
+
+    if padded_bytes[-padding_len:] != [padding_len] * padding_len:
+        raise ValueError("Invalid padding bytes.")
+
+    return padded_bytes[:-padding_len]
+
+
 def prepare_dispersal_request(data, app_id, index):
     data_bytes = data.encode("utf-8")
     padded_bytes = add_padding(list(data_bytes))

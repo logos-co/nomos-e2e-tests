@@ -1,4 +1,6 @@
+import json
 import os
+import re
 
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix
@@ -8,6 +10,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 from src.cli.cli_vars import nomos_cli
 from src.docker_manager import DockerManager
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
+from src.steps.da import remove_padding
 
 logger = get_custom_logger(__name__)
 
@@ -82,14 +85,30 @@ class NomosCli:
             self._container = None
             logger.debug("Container killed.")
 
-    def get_reconstruct_result(self):
+    def run_reconstruct(self, input_values=None, decode_only=True):
         keywords = ["Reconstructed data"]
+        self.run(input_values)
 
         log_stream = self._container.logs(stream=True)
 
         matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False, log_stream)
-        # assert not matches, f"Reconstructed data not found {matches}"
-        for match in matches:
-            logger.debug(f"match {match}\n\n\n")
+        assert len(matches) > 0, f"Reconstructed data not found {matches}"
+
+        # Use regular expression that captures the byte list after "Reconstructed data"
+        result = re.sub(r".*Reconstructed data\s*(\[[^\]]+\]).*", r"\1", matches[keywords[0]][0])
+
+        result_bytes = []
+        try:
+            result_bytes = json.loads(result)
+        except Exception as ex:
+            logger.debug(f"Conversion to bytes failed with exception {ex}")
+
+        if decode_only:
+            result_bytes = result_bytes[:-31]
+
+        result_bytes = remove_padding(result_bytes)
+        result = bytes(result_bytes).decode("utf-8")
 
         DS.nomos_nodes.remove(self)
+
+        return result
