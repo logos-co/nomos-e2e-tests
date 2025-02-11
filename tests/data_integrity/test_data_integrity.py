@@ -1,4 +1,5 @@
 import json
+import random
 
 import pytest
 
@@ -14,27 +15,29 @@ logger = get_custom_logger(__name__)
 class TestDataIntegrity(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.skip(reason="Waiting for PR https://github.com/logos-co/nomos-node/pull/994")
-    @pytest.mark.usefixtures("setup_5_node_cluster")
+    @pytest.mark.usefixtures("setup_4_node_cluster")
     def test_da_identify_retrieve_missing_columns(self):
+        delay(5)
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
-        received_data = []
-        # Get data only from half of nodes
-        for node in self.main_nodes[2:4]:
-            received_data.append(self.get_data_range(node, [0] * 31 + [1], [0] * 8, [0] * 7 + [3]))
+        delay(20)
+        # Select one target node at random to get blob data for 1/2 columns
+        selected_node = self.main_nodes[random.randint(1, 3)]
+        rcv_data = self.get_data_range(selected_node, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
+        rcv_data_json = json.dumps(rcv_data)
 
-        # Use received blob data to reconstruct the original data
-        # nomos-cli reconstruct command required
-        reconstructed_data = []
-        assert DATA_TO_DISPERSE[0] == bytes(reconstructed_data).decode("utf-8")
+        cli = NomosCli(command="reconstruct")
+        reconstructed_data = cli.run_reconstruct(input_values=[rcv_data_json])
+
+        assert DATA_TO_DISPERSE[0] == reconstructed_data, "Reconstructed data are not same with original data"
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
         delay(5)
-        received_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
-        rcv_data_json = json.dumps(received_data)
+        rcv_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
+        rcv_data_json = json.dumps(rcv_data)
+
         cli = NomosCli(command="reconstruct")
-        decoded_data = cli.run_reconstruct(input_values=[rcv_data_json])
+        decoded_data = cli.run_reconstruct(input_values=[rcv_data_json], decode_only=True)
 
         assert DATA_TO_DISPERSE[0] == decoded_data, "Retrieved data are not same with original data"

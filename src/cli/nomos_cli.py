@@ -85,7 +85,7 @@ class NomosCli:
             self._container = None
             logger.debug("Container killed.")
 
-    def run_reconstruct(self, input_values=None, decode_only=True):
+    def run_reconstruct(self, input_values=None, decode_only=False):
         keywords = ["Reconstructed data"]
         self.run(input_values)
 
