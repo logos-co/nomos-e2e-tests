@@ -1,0 +1,32 @@
+name: Test E2E Tests
+
+on:
+  push:
+    branches:
+      - test-data-availability-integrity
+
+jobs:
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+    - name: Remove unwanted software
+      uses: ./.github/actions/prune-vm
+
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - run: |
+        pip install -r requirements.txt
+        mkdir -p kzgrs
+        wget https://raw.githubusercontent.com/logos-co/nomos-node/master/tests/kzgrs/kzgrs_test_params -O kzgrs/kzgrs_test_params
+
+    - name: Run tests
+      run: |
+        pytest tests/data_integrity/test_data_integrity.py
