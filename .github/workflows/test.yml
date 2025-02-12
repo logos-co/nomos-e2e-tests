@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
+    - uses: actions/checkout@v4
+
     - name: Remove unwanted software
       uses: ./.github/actions/prune-vm
-
-    - uses: actions/checkout@v4
 
     - uses: actions/setup-python@v4
       with:
