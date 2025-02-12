@@ -1,4 +1,4 @@
-name: Test E2E Tests
+name: Test E2E Data Integrity
 
 on:
   push:
