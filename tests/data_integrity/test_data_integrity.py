@@ -19,7 +19,7 @@ class TestDataIntegrity(StepsDataAvailability):
     def test_da_identify_retrieve_missing_columns(self):
         delay(5)
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
-        delay(20)
+        delay(5)
         # Select one target node at random to get blob data for 1/2 columns
         selected_node = self.main_nodes[random.randint(1, 3)]
         rcv_data = self.get_data_range(selected_node, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
@@ -32,6 +32,7 @@ class TestDataIntegrity(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
+        delay(5)
         self.disperse_data(DATA_TO_DISPERSE[0], [0] * 31 + [1], [0] * 8)
         delay(5)
         rcv_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
