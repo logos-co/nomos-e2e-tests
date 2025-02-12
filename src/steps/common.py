@@ -46,7 +46,7 @@ class StepsCommon:
         start_nodes(self.main_nodes)
 
         try:
-            ensure_nodes_ready(self.main_nodes[2:])
+            ensure_nodes_ready(self.main_nodes[1:])
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
@@ -64,7 +64,7 @@ class StepsCommon:
         start_nodes(self.main_nodes)
 
         try:
-            ensure_nodes_ready(self.main_nodes[2:])
+            ensure_nodes_ready(self.main_nodes[1:])
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
