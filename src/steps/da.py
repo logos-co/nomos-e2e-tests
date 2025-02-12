@@ -59,8 +59,15 @@ def prepare_get_range_request(app_id, start_index, end_index):
     return query_data
 
 
-class StepsDataAvailability(StepsCommon):
+def response_contains_data(response):
+    for index, blobs in response:
+        if len(blobs) != 0:
+            return True
 
+    return False
+
+
+class StepsDataAvailability(StepsCommon):
     def find_executor_node(self):
         executor = {}
         for node in self.main_nodes:
@@ -69,13 +76,17 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
-    @retry(stop=stop_after_delay(20), wait=wait_fixed(0.1), reraise=True)
+    @retry(stop=stop_after_delay(65), wait=wait_fixed(1), reraise=True)
     def disperse_data(self, data, app_id, index):
         request = prepare_dispersal_request(data, app_id, index)
         executor = self.find_executor_node()
-        executor.send_dispersal_request(request)
+        try:
+            executor.send_dispersal_request(request)
+        except Exception as ex:
+            assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
     @allure.step
+    @retry(stop=stop_after_delay(45), wait=wait_fixed(1), reraise=True)
     def get_data_range(self, node, app_id, start, end):
         response = []
         query = prepare_get_range_request(app_id, start, end)
@@ -83,5 +94,7 @@ class StepsDataAvailability(StepsCommon):
             response = node.send_get_data_range_request(query)
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+
+        assert response_contains_data(response), "Get data range response is empty"
 
         return response

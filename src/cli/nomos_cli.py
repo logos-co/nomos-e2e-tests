@@ -34,7 +34,7 @@ class NomosCli:
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
 
     def run(self, input_values=None, **kwargs):
-        logger.debug(f"NomosCli initialized with log path {self._log_path}")
+        logger.debug(f"NomosCli starting with log path {self._log_path}")
 
         self._port_map = {}
 
