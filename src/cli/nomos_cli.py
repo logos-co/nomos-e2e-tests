@@ -70,10 +70,7 @@ class NomosCli:
 
         match self._command:
             case "reconstruct":
-                if "decode_only" in kwargs:
-                    decode_only = kwargs["decode_only"]
-                else:
-                    decode_only = False
+                decode_only = kwargs.get("decode_only", False)
                 return self.reconstruct(input_values=input_values, decode_only=decode_only)
             case _:
                 return

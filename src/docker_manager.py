@@ -35,7 +35,11 @@ class DockerManager:
         logger.debug(f"Network {network_name} created")
         return network
 
-    def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, remove_container=True, name=None, command=None):
+    def start_container(self, image_name, port_bindings, args, log_path, volumes, entrypoint, **kwargs):
+        remove_container = kwargs.get("remove_container", True)
+        name = kwargs.get("name")
+        command = kwargs.get("command")
+
         cli_args = []
         if command is None:
             for key, value in args.items():
