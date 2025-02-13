@@ -27,7 +27,7 @@ class TestDataIntegrity(StepsDataAvailability):
 
         reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json])
 
-        assert DATA_TO_DISPERSE[0] == reconstructed_data, "Reconstructed data are not same with original data"
+        assert DATA_TO_DISPERSE[6] == reconstructed_data, "Reconstructed data are not same with original data"
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
@@ -39,4 +39,4 @@ class TestDataIntegrity(StepsDataAvailability):
 
         decoded_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json], decode_only=True)
 
-        assert DATA_TO_DISPERSE[0] == decoded_data, "Retrieved data are not same with original data"
+        assert DATA_TO_DISPERSE[6] == decoded_data, "Retrieved data are not same with original data"
