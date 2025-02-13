@@ -16,7 +16,14 @@ logger = get_custom_logger(__name__)
 
 
 class NomosCli:
-    def __init__(self, command=""):
+    def __init__(self, **kwargs):
+        if "command" not in kwargs:
+            raise ValueError("The command parameter is required")
+
+        command = kwargs["command"]
+        if command not in nomos_cli:
+            raise ValueError("Unknown command provided")
+
         logger.debug(f"Cli is going to be initialized with this config {nomos_cli[command]}")
         self._command = command
         self._image_name = nomos_cli[command]["image"]
