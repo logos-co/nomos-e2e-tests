@@ -8,7 +8,7 @@ from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.cli.cli_vars import nomos_cli
-from src.docker_manager import DockerManager
+from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
 from src.steps.da import remove_padding
 
@@ -107,24 +107,8 @@ class NomosCli:
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
-        if self._container:
-            logger.debug(f"Stopping container with id {self._container.short_id}")
-            self._container.stop()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container stopped.")
+        self._container = stop(self._container)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
-        if self._container:
-            logger.debug(f"Killing container with id {self._container.short_id}")
-            self._container.kill()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container killed.")
+        self._container = kill(self._container)

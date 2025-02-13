@@ -168,3 +168,29 @@ class DockerManager:
         else:
             logger.debug("No keywords found in the nomos logs.")
             return None
+
+
+def stop(container):
+    if container:
+        logger.debug(f"Stopping container with id {container.short_id}")
+        container.stop()
+        try:
+            container.remove()
+        except:
+            pass
+        logger.debug("Container stopped.")
+
+        return None
+
+
+def kill(container):
+    if container:
+        logger.debug(f"Killing container with id {container.short_id}")
+        container.kill()
+        try:
+            container.remove()
+        except:
+            pass
+        logger.debug("Container killed.")
+
+        return None
