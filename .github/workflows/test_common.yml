@@ -1,0 +1,32 @@
+name: E2E Tests Common
+
+on:
+  workflow_call:
+
+env:
+  FORCE_COLOR: "1"
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove unwanted software
+        uses: ./.github/actions/prune-vm
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - run: |
+          pip install -r requirements.txt
+          mkdir -p kzgrs
+          wget https://raw.githubusercontent.com/logos-co/nomos-node/master/tests/kzgrs/kzgrs_test_params -O kzgrs/kzgrs_test_params
+
+      - name: Run tests
+        run: |
+          pytest
