@@ -6,13 +6,13 @@ from src.steps.common import StepsCommon
 
 
 def add_padding(orig_bytes):
-    block_size = 31
     """
     Pads a list of bytes (integers in [0..255]) using a PKCS#7-like scheme:
     - The value of each padded byte is the number of bytes padded.
     - If the original data is already a multiple of the block size,
       an additional full block of bytes (each the block size) is added.
     """
+    block_size = 31
     original_len = len(orig_bytes)
     padding_needed = block_size - (original_len % block_size)
     # If the data is already a multiple of block_size, add a full block of padding
@@ -29,7 +29,6 @@ def remove_padding(padded_bytes):
     Removes PKCS#7-like padding from a list of bytes.
     Raises:
         ValueError: If the padding is incorrect.
-
     Returns:
         The original list of bytes without padding.
     """

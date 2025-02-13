@@ -26,3 +26,15 @@ def gen_step_id():
 
 def generate_log_prefix():
     return "".join(random.choices(string.ascii_lowercase, k=4))
+
+
+def to_index(n: int) -> list:
+    if n < 0:
+        raise ValueError("Input must be an unsigned integer (non-negative)")
+    return list(n.to_bytes(8, byteorder="big"))
+
+
+def to_app_id(n: int) -> list:
+    if n < 0:
+        raise ValueError("Input must be an unsigned integer (non-negative)")
+    return list(n.to_bytes(32, byteorder="big"))

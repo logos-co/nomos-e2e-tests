@@ -49,7 +49,7 @@ class DockerManager:
             cli_args = command
 
         cli_args_str_for_log = " ".join(cli_args)
-        logger.debug(f"docker run -i -t {port_bindings} {image_name} {cli_args_str_for_log}")
+        logger.debug(f"docker run -i -t --entrypoint {entrypoint} {port_bindings} {image_name} {cli_args_str_for_log}")
 
         try:
             container = self._client.containers.run(
