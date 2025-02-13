@@ -25,8 +25,7 @@ class TestDataIntegrity(StepsDataAvailability):
         rcv_data = self.get_data_range(selected_node, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
         rcv_data_json = json.dumps(rcv_data)
 
-        cli = NomosCli(command="reconstruct")
-        reconstructed_data = cli.run_reconstruct(input_values=[rcv_data_json])
+        reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json])
 
         assert DATA_TO_DISPERSE[0] == reconstructed_data, "Reconstructed data are not same with original data"
 
@@ -38,7 +37,6 @@ class TestDataIntegrity(StepsDataAvailability):
         rcv_data = self.get_data_range(self.node2, [0] * 31 + [1], [0] * 8, [0] * 7 + [5])
         rcv_data_json = json.dumps(rcv_data)
 
-        cli = NomosCli(command="reconstruct")
-        decoded_data = cli.run_reconstruct(input_values=[rcv_data_json], decode_only=True)
+        decoded_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json], decode_only=True)
 
         assert DATA_TO_DISPERSE[0] == decoded_data, "Retrieved data are not same with original data"

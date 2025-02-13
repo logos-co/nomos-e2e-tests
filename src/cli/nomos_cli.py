@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from enum import Enum
 
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix
@@ -61,33 +62,18 @@ class NomosCli:
 
         DS.nomos_nodes.append(self)
 
-    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
-    def stop(self):
-        if self._container:
-            logger.debug(f"Stopping container with id {self._container.short_id}")
-            self._container.stop()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container stopped.")
+        match self._command:
+            case "reconstruct":
+                if "decode_only" in kwargs:
+                    decode_only = kwargs["decode_only"]
+                else:
+                    decode_only = False
+                return self.reconstruct(input_values=input_values, decode_only=decode_only)
+            case _:
+                return
 
-    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
-    def kill(self):
-        if self._container:
-            logger.debug(f"Killing container with id {self._container.short_id}")
-            self._container.kill()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container killed.")
-
-    def run_reconstruct(self, input_values=None, decode_only=False):
+    def reconstruct(self, input_values=None, decode_only=False):
         keywords = ["Reconstructed data"]
-        self.run(input_values)
 
         log_stream = self._container.logs(stream=True)
 
@@ -112,3 +98,27 @@ class NomosCli:
         DS.nomos_nodes.remove(self)
 
         return result
+
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
+    def stop(self):
+        if self._container:
+            logger.debug(f"Stopping container with id {self._container.short_id}")
+            self._container.stop()
+            try:
+                self._container.remove()
+            except:
+                pass
+            self._container = None
+            logger.debug("Container stopped.")
+
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
+    def kill(self):
+        if self._container:
+            logger.debug(f"Killing container with id {self._container.short_id}")
+            self._container.kill()
+            try:
+                self._container.remove()
+            except:
+                pass
+            self._container = None
+            logger.debug("Container killed.")
