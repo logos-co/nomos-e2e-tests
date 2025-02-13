@@ -1,4 +1,4 @@
-name: Nomos E2E Tests
+name: Nomos E2E Tests Daily
 
 on:
   schedule:
