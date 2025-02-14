@@ -46,26 +46,25 @@ class StepsCommon:
         start_nodes(self.main_nodes)
 
         try:
-            ensure_nodes_ready(self.main_nodes[2:])
+            ensure_nodes_ready(self.main_nodes[1:])
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
     @pytest.fixture(scope="function")
-    def setup_5_node_cluster(self, request):
+    def setup_4_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
-        prepare_cluster_config(5)
+        prepare_cluster_config(4)
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")
         self.node3 = NomosNode(NOMOS, "nomos_node_1")
         self.node4 = NomosNode(NOMOS, "nomos_node_2")
-        self.node5 = NomosNode(NOMOS, "nomos_node_3")
-        self.node6 = NomosNode(NOMOS_EXECUTOR, "nomos_node_4")
-        self.main_nodes.extend([self.node1, self.node2, self.node3, self.node4, self.node5, self.node6])
+        self.node5 = NomosNode(NOMOS_EXECUTOR, "nomos_node_3")
+        self.main_nodes.extend([self.node1, self.node2, self.node3, self.node4, self.node5])
         start_nodes(self.main_nodes)
 
         try:
-            ensure_nodes_ready(self.main_nodes[2:])
+            ensure_nodes_ready(self.main_nodes[1:])
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise

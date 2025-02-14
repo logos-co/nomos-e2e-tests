@@ -1,5 +1,5 @@
 port: 4400
-n_hosts: 5
+n_hosts: 2
 timeout: 30
 
 # ConsensusConfig related parameters

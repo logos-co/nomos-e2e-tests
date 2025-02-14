@@ -4,8 +4,8 @@ from src.data_storage import DS
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
-from src.node.api_clients.rest import REST
-from src.node.docker_mananger import DockerManager
+from src.api_clients.rest import REST
+from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR
 from src.node.node_vars import nomos_nodes
 from src.test_data import LOG_ERROR_KEYWORDS
@@ -43,7 +43,7 @@ class NomosNode:
 
     @retry(stop=stop_after_delay(60), wait=wait_fixed(0.1), reraise=True)
     def start(self, wait_for_node_sec=120, **kwargs):
-        logger.debug("Starting Node...")
+        logger.debug(f"Starting Node {self._container_name} with role {self._node_type}")
         self._docker_manager.create_network()
         self._ext_ip = self._docker_manager.generate_random_ext_ip()
 
@@ -84,27 +84,11 @@ class NomosNode:
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
-        if self._container:
-            logger.debug(f"Stopping container with id {self._container.short_id}")
-            self._container.stop()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container stopped.")
+        self._container = stop(self._container)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
-        if self._container:
-            logger.debug(f"Killing container with id {self._container.short_id}")
-            self._container.kill()
-            try:
-                self._container.remove()
-            except:
-                pass
-            self._container = None
-            logger.debug("Container killed.")
+        self._container = kill(self._container)
 
     def restart(self):
         if self._container:

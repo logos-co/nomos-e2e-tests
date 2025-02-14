@@ -1,0 +1,11 @@
+name: Nomos E2E Tests Daily
+
+on:
+  schedule:
+    - cron:  '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  test-common:
+    uses: ./.github/workflows/test_common.yml
+
