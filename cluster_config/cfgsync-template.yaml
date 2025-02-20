@@ -1,5 +1,5 @@
 port: 4400
-n_hosts: 2
+n_hosts: {{ num_hosts }}
 timeout: 30
 
 # ConsensusConfig related parameters
@@ -7,7 +7,7 @@ security_param: 10
 active_slot_coeff: 0.9
 
 # DaConfig related parameters
-subnetwork_size: 1024
+subnetwork_size: {{ subnet_size }}
 dispersal_factor: 2
 num_samples: 1
 num_subnets: 2

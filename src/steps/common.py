@@ -8,15 +8,24 @@ from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
 
+from jinja2 import Template
+
 logger = get_custom_logger(__name__)
 
 
 def prepare_cluster_config(node_count, subnetwork_size=2):
     cwd = os.getcwd()
     config_dir = "cluster_config"
-    src = f"{cwd}/{config_dir}/cfgsync-{node_count}node{subnetwork_size}.yaml"
-    dst = f"{cwd}/{config_dir}/cfgsync.yaml"
-    shutil.copyfile(src, dst)
+
+    with open(f"{cwd}/{config_dir}/cfgsync-template.yaml", "r") as file:
+        template_content = file.read()
+    template = Template(template_content)
+
+    rendered = template.render(num_hosts=node_count, subnet_size=subnetwork_size)
+    logger.debug(f"Rendered template {rendered}")
+
+    with open(f"{cwd}/{config_dir}/cfgsync.yaml", "w") as outfile:
+        outfile.write(rendered)
 
 
 def start_nodes(nodes):
