@@ -11,10 +11,10 @@ from src.node.nomos_node import NomosNode
 logger = get_custom_logger(__name__)
 
 
-def prepare_cluster_config(node_count):
+def prepare_cluster_config(node_count, subnetwork_size=2):
     cwd = os.getcwd()
     config_dir = "cluster_config"
-    src = f"{cwd}/{config_dir}/cfgsync-{node_count}node.yaml"
+    src = f"{cwd}/{config_dir}/cfgsync-{node_count}node{subnetwork_size}.yaml"
     dst = f"{cwd}/{config_dir}/cfgsync.yaml"
     shutil.copyfile(src, dst)
 
@@ -38,7 +38,13 @@ class StepsCommon:
     @pytest.fixture(scope="function")
     def setup_2_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
-        prepare_cluster_config(2)
+
+        if hasattr(request, "param"):
+            subnet_size = request.param
+        else:
+            subnet_size = 2
+
+        prepare_cluster_config(2, subnet_size)
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")
         self.node3 = NomosNode(NOMOS_EXECUTOR, "nomos_node_1")
