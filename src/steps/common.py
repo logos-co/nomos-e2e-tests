@@ -22,7 +22,6 @@ def prepare_cluster_config(node_count, subnetwork_size=2):
     template = Template(template_content)
 
     rendered = template.render(num_hosts=node_count, subnet_size=subnetwork_size)
-    logger.debug(f"Rendered template {rendered}")
 
     with open(f"{cwd}/{config_dir}/cfgsync.yaml", "w") as outfile:
         outfile.write(rendered)
