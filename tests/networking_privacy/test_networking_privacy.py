@@ -27,3 +27,7 @@ class TestNetworkingPrivacy(StepsDataAvailability):
         consumed = curr_total - prev_total
 
         logger.debug(f"consumed: {consumed}")
+
+        delay(5)
+        rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
+        logger.debug(f"Received data: {rcv_data}")
