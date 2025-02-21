@@ -12,22 +12,33 @@ logger = get_custom_logger(__name__)
 class TestNetworkingPrivacy(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.parametrize("setup_2_node_cluster", [1024], indirect=True)
+    @pytest.mark.parametrize("setup_2_node_cluster", [2], indirect=True)
     def test_consumed_bandwidth_dispersal(self, setup_2_node_cluster):
         delay(5)
         net_io = psutil.net_io_counters()
         prev_total = net_io.bytes_sent + net_io.bytes_recv
-        self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
+
+        successful_dispersals = 0
+        for i in range(20):
+            try:
+                self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0))
+                successful_dispersals += 1
+            except Exception as ex:
+                logger.warning(f"Dispersal #{i} was not successful with error {ex}")
+
+            if successful_dispersals == 10:
+                break
+
+            delay(0.1)
+
         net_io = psutil.net_io_counters()
         curr_total = net_io.bytes_sent + net_io.bytes_recv
 
-        logger.debug(f"prev_total: {prev_total}")
-        logger.debug(f"curr_total: {curr_total}")
-
         consumed = curr_total - prev_total
 
-        logger.debug(f"consumed: {consumed}")
+        assert successful_dispersals == 10, "Unable to finish 10 successful dispersals"
 
-        delay(5)
-        rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
-        logger.debug(f"Received data: {rcv_data}")
+        data_sent = 2 * successful_dispersals * len(DATA_TO_DISPERSE[7])
+        overhead = (consumed - data_sent) / data_sent
+
+        assert overhead < 400, "Dispersal overhead is too high"
