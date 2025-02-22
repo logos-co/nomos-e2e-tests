@@ -77,12 +77,15 @@ class StepsDataAvailability(StepsCommon):
     @allure.step
     @retry(stop=stop_after_delay(65), wait=wait_fixed(1), reraise=True)
     def disperse_data(self, data, app_id, index):
+        response = []
         request = prepare_dispersal_request(data, app_id, index)
         executor = self.find_executor_node()
         try:
-            executor.send_dispersal_request(request)
+            response = executor.send_dispersal_request(request)
         except Exception as ex:
             assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+
+        assert response.status_code == 200, "Send dispersal finished with unexpected response code"
 
     @allure.step
     @retry(stop=stop_after_delay(45), wait=wait_fixed(1), reraise=True)

@@ -7,7 +7,7 @@ security_param: 10
 active_slot_coeff: 0.9
 
 # DaConfig related parameters
-subnetwork_size: 2
+subnetwork_size: 1024
 dispersal_factor: 2
 num_samples: 1
 num_subnets: 2
