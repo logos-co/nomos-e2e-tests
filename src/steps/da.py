@@ -88,6 +88,8 @@ class StepsDataAvailability(StepsCommon):
 
             assert response.status_code == 200, "Send dispersal finished with unexpected response code"
 
+        disperse()
+
     @allure.step
     def get_data_range(self, node, app_id, start, end, timeout_duration=45):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
@@ -102,3 +104,5 @@ class StepsDataAvailability(StepsCommon):
             assert response_contains_data(response), "Get data range response is empty"
 
             return response
+
+        get_range()
