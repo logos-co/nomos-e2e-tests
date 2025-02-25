@@ -1,3 +1,5 @@
+import pytest
+
 from src.libs.common import delay, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability
@@ -9,7 +11,8 @@ logger = get_custom_logger(__name__)
 class TestDosRobustness(StepsDataAvailability):
     main_nodes = []
 
-    def test_spam_protection_data_uploads(self):
+    @pytest.mark.parametrize("setup_2_node_cluster", [2], indirect=True)
+    def test_spam_protection_data_uploads(self, setup_2_node_cluster):
         delay(5)
         successful_dispersals = 0
         for i in range(1000):
