@@ -17,7 +17,7 @@ class TestDosRobustness(StepsDataAvailability):
         successful_dispersals = 0
         for i in range(1000):
             try:
-                self.disperse_data(DATA_TO_DISPERSE[0], to_app_id(1), to_index(0))
+                self.disperse_data(DATA_TO_DISPERSE[0], to_app_id(1), to_index(0), timeout_duration=0)
                 successful_dispersals = i
             except Exception as ex:
                 logger.debug(f"Dispersal #{i} was not successful with error {ex}")

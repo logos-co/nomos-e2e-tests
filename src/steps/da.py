@@ -75,28 +75,30 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
-    @retry(stop=stop_after_delay(65), wait=wait_fixed(1), reraise=True)
-    def disperse_data(self, data, app_id, index):
-        response = []
-        request = prepare_dispersal_request(data, app_id, index)
-        executor = self.find_executor_node()
-        try:
-            response = executor.send_dispersal_request(request)
-        except Exception as ex:
-            assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+    def disperse_data(self, data, app_id, index, timeout_duration=65):
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
+        def disperse(my_self=self):
+            response = []
+            request = prepare_dispersal_request(data, app_id, index)
+            executor = my_self.find_executor_node()
+            try:
+                response = executor.send_dispersal_request(request)
+            except Exception as ex:
+                assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
-        assert response.status_code == 200, "Send dispersal finished with unexpected response code"
+            assert response.status_code == 200, "Send dispersal finished with unexpected response code"
 
     @allure.step
-    @retry(stop=stop_after_delay(45), wait=wait_fixed(1), reraise=True)
-    def get_data_range(self, node, app_id, start, end):
-        response = []
-        query = prepare_get_range_request(app_id, start, end)
-        try:
-            response = node.send_get_data_range_request(query)
-        except Exception as ex:
-            assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+    def get_data_range(self, node, app_id, start, end, timeout_duration=45):
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
+        def get_range():
+            response = []
+            query = prepare_get_range_request(app_id, start, end)
+            try:
+                response = node.send_get_data_range_request(query)
+            except Exception as ex:
+                assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
-        assert response_contains_data(response), "Get data range response is empty"
+            assert response_contains_data(response), "Get data range response is empty"
 
-        return response
+            return response
