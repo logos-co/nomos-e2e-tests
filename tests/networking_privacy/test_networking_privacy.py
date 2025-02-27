@@ -14,7 +14,6 @@ class TestNetworkingPrivacy(StepsDataAvailability):
 
     @pytest.mark.parametrize("setup_2_node_cluster", [2], indirect=True)
     def test_consumed_bandwidth_dispersal(self, setup_2_node_cluster):
-        delay(5)
         net_io = psutil.net_io_counters()
         prev_total = net_io.bytes_sent + net_io.bytes_recv
 
