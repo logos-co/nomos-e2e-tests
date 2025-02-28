@@ -2,7 +2,10 @@ import allure
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.env_vars import NOMOS_EXECUTOR
+from src.libs.custom_logger import get_custom_logger
 from src.steps.common import StepsCommon
+
+logger = get_custom_logger(__name__)
 
 
 def add_padding(orig_bytes):
@@ -46,10 +49,17 @@ def remove_padding(padded_bytes):
     return padded_bytes[:-padding_len]
 
 
-def prepare_dispersal_request(data, app_id, index):
-    data_bytes = data.encode("utf-8")
-    padded_bytes = add_padding(list(data_bytes))
-    dispersal_data = {"data": padded_bytes, "metadata": {"app_id": app_id, "index": index}}
+def prepare_dispersal_request(data, app_id, index, utf8=True, padding=True):
+    if utf8:
+        data_bytes = data.encode("utf-8")
+    else:
+        data_bytes = bytes(data)
+
+    data_list = list(data_bytes)
+    if padding:
+        data_list = add_padding(data_list)
+
+    dispersal_data = {"data": data_list, "metadata": {"app_id": app_id, "index": index}}
     return dispersal_data
 
 
@@ -75,11 +85,11 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
-    def disperse_data(self, data, app_id, index, timeout_duration=65):
+    def disperse_data(self, data, app_id, index, timeout_duration=65, utf8=True, padding=True):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
         def disperse(my_self=self):
             response = []
-            request = prepare_dispersal_request(data, app_id, index)
+            request = prepare_dispersal_request(data, app_id, index, utf8=utf8, padding=padding)
             executor = my_self.find_executor_node()
             try:
                 response = executor.send_dispersal_request(request)
