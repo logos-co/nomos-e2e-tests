@@ -12,7 +12,7 @@ logger = get_custom_logger(__name__)
 class TestNetworkingPrivacy(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.parametrize("setup_2_node_cluster", [2], indirect=True)
+    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_consumed_bandwidth_dispersal(self, setup_2_node_cluster):
         delay(5)
         net_io = psutil.net_io_counters()
