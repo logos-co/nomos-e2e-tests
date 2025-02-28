@@ -14,7 +14,6 @@ class TestNetworkingPrivacy(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_consumed_bandwidth_dispersal(self, setup_2_node_cluster):
-        delay(5)
         net_io = psutil.net_io_counters()
         prev_total = net_io.bytes_sent + net_io.bytes_recv
 
@@ -45,7 +44,6 @@ class TestNetworkingPrivacy(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_consumed_bandwidth_random_data_dispersal(self):
-        delay(5)
         net_io = psutil.net_io_counters()
         prev_total = net_io.bytes_sent + net_io.bytes_recv
 

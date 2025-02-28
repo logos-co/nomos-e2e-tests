@@ -1,8 +1,6 @@
 import pytest
 
-from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
 from src.libs.custom_logger import get_custom_logger
-from src.node.nomos_node import NomosNode
 from src.steps.common import StepsCommon
 
 logger = get_custom_logger(__name__)
