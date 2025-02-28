@@ -19,7 +19,7 @@ NOMOS = "nomos"
 NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
 
-DEFAULT_IMAGE = "ghcr.io/logos-co/nomos-node:latest"
+DEFAULT_IMAGE = "ghcr.io/logos-co/nomos-node:testnet"
 
 NODE_1 = get_env_var("NODE_1", NOMOS)
 NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)

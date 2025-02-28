@@ -40,6 +40,5 @@ def to_app_id(n: int) -> list:
     return list(n.to_bytes(32, byteorder="big"))
 
 
-def generate_random_bytes(n_max=31):
-    random_n = random.randint(1, n_max)
-    return os.urandom(random_n)
+def generate_random_bytes(n=31):
+    return os.urandom(n)
