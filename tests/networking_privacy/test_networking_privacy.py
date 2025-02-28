@@ -53,7 +53,7 @@ class TestNetworkingPrivacy(StepsDataAvailability):
         successful_dispersals = 0
         for i in range(20):
             try:
-                self.disperse_data(data_to_disperse, to_app_id(1), to_index(0), with_utf8_padding=False)
+                self.disperse_data(data_to_disperse, to_app_id(1), to_index(0), utf8=False, padding=False)
                 successful_dispersals += 1
             except Exception as ex:
                 logger.warning(f"Dispersal #{i} was not successful with error {ex}")
