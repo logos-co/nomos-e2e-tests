@@ -12,7 +12,7 @@ class TestDosRobustness(StepsDataAvailability):
     main_nodes = []
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
-    def test_spam_protection_valid_uploads(self, setup_2_node_cluster):
+    def test_spam_protection_valid_uploads(self):
         num_samples = len(DATA_TO_DISPERSE)
         missing_dispersals = num_samples
         for i in range(num_samples):
@@ -28,7 +28,7 @@ class TestDosRobustness(StepsDataAvailability):
         assert missing_dispersals == 0, f"{missing_dispersals} dispersals were not successful"
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
-    def test_spam_protection_single_burst(self, setup_2_node_cluster):
+    def test_spam_protection_single_burst(self):
         successful_dispersals = 0
         for i in range(1000):
             try:
