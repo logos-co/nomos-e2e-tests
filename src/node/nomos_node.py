@@ -123,6 +123,9 @@ class NomosNode:
     def node_type(self):
         return self._node_type
 
+    def name(self):
+        return self._container_name
+
     def check_nomos_log_errors(self, whitelist=None):
         keywords = LOG_ERROR_KEYWORDS
 
