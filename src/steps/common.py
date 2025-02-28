@@ -5,6 +5,7 @@ import shutil
 import pytest
 
 from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
+from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
 
@@ -65,6 +66,8 @@ class StepsCommon:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
+        delay(5)
+
     @pytest.fixture(scope="function")
     def setup_4_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
@@ -82,3 +85,5 @@ class StepsCommon:
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
+
+        delay(5)

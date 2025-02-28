@@ -38,3 +38,7 @@ def to_app_id(n: int) -> list:
     if n < 0:
         raise ValueError("Input must be an unsigned integer (non-negative)")
     return list(n.to_bytes(32, byteorder="big"))
+
+
+def generate_random_bytes(n=31):
+    return os.urandom(n)

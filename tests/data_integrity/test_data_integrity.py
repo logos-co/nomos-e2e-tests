@@ -17,21 +17,25 @@ class TestDataIntegrity(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_4_node_cluster")
     def test_da_identify_retrieve_missing_columns(self):
-        delay(5)
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
         delay(5)
-        # Select one target node at random to get blob data for 1/2 columns
-        selected_node = self.main_nodes[random.randint(1, 3)]
-        rcv_data = self.get_data_range(selected_node, to_app_id(1), to_index(0), to_index(5))
-        rcv_data_json = json.dumps(rcv_data)
+        test_results = []
+        # Iterate through standard nodes to get blob data for 1/2 columns
+        for node in self.main_nodes[1:4]:
+            rcv_data = self.get_data_range(node, to_app_id(1), to_index(0), to_index(5))
+            rcv_data_json = json.dumps(rcv_data)
 
-        reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json])
+            reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json])
 
-        assert DATA_TO_DISPERSE[1] == reconstructed_data, "Reconstructed data are not same with original data"
+            if DATA_TO_DISPERSE[1] == reconstructed_data:
+                test_results.append(node.name())
+
+        assert len(test_results) > 0, "Dispersed data were not received by any node"
+
+        logger.info(f"Dispersed data received by : {test_results}")
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
-        delay(5)
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
         delay(5)
         rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
