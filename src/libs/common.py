@@ -46,3 +46,8 @@ def random_divide_k(n, k):
     cuts = sorted(random.sample(range(1, n), k - 1))
     parts = [cuts[0]] + [cuts[i] - cuts[i - 1] for i in range(1, len(cuts))] + [n - cuts[-1]]
     return parts
+  
+
+def generate_random_bytes(n=31):
+    return os.urandom(n)
+

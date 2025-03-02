@@ -100,6 +100,7 @@ class StepsDataAvailability(StepsCommon):
 
         disperse()
 
+
     @allure.step
     def get_data_range(self, node, app_id, start, end, timeout_duration=45):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
