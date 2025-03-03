@@ -96,10 +96,12 @@ class StepsDataAvailability(StepsCommon):
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
-            assert response.status_code == 200, "Send dispersal finished with unexpected response code"
+            assert hasattr(response, "status_code"), "Missing status_code"
+            assert response.status_code in (200, 429), "Unexpected status code"
 
-        disperse()
+            return response
 
+        return disperse()
 
     @allure.step
     def get_data_range(self, node, app_id, start, end, timeout_duration=45):
@@ -116,4 +118,4 @@ class StepsDataAvailability(StepsCommon):
 
             return response
 
-        get_range()
+        return get_range()

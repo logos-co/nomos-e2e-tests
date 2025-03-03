@@ -1,6 +1,7 @@
+import random
 import pytest
 
-from src.libs.common import delay, to_app_id, to_index, random_divide_k
+from src.libs.common import delay, to_app_id, to_index, random_divide_k, generate_random_bytes
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability
 from src.test_data import DATA_TO_DISPERSE
@@ -17,11 +18,11 @@ class TestDosRobustness(StepsDataAvailability):
         missing_dispersals = num_samples
         for i in range(num_samples):
             try:
-                self.disperse_data(DATA_TO_DISPERSE[i], to_app_id(1), to_index(0), timeout_duration=0)
-                missing_dispersals -= 1
+                response = self.disperse_data(DATA_TO_DISPERSE[i], to_app_id(1), to_index(0), timeout_duration=0)
+                if response.status_code == 200:
+                    missing_dispersals -= 1
             except Exception as ex:
-                logger.error(f"Dispersal #{i+1} was not successful with error {ex}")
-                break
+                raise Exception(f"Dispersal #{i+1} was not successful with error {ex}")
 
             delay(0.1)
 
@@ -34,11 +35,34 @@ class TestDosRobustness(StepsDataAvailability):
         successful_dispersals = 0
         for i in range(spam_per_burst):
             try:
-                self.disperse_data(DATA_TO_DISPERSE[0], to_app_id(1), to_index(0), timeout_duration=0)
-                successful_dispersals = i
+                response = self.disperse_data(DATA_TO_DISPERSE[0], to_app_id(1), to_index(0), timeout_duration=0)
+                if response.status_code == 429:
+                    break
+                else:
+                    successful_dispersals += 1
             except Exception as ex:
-                logger.debug(f"Dispersal #{i+1} was not successful with error {ex}")
-                break
+                raise Exception(f"Dispersal #{i+1} was not successful with error {ex}")
+
+        assert successful_dispersals <= rate_limit, "All consecutive dispersals were successful without any constraint"
+
+    @pytest.mark.usefixtures("setup_2_node_cluster")
+    def test_spam_protection_random_bytes_single_burst(self):
+        rate_limit = 1000
+        spam_per_burst = rate_limit + 10
+
+        n = random.randint(1, 256)
+        data_to_disperse = generate_random_bytes(n)
+
+        successful_dispersals = 0
+        for i in range(spam_per_burst):
+            try:
+                response = self.disperse_data(data_to_disperse, to_app_id(1), to_index(0), timeout_duration=0, utf8=False)
+                if response.status_code == 429:
+                    break
+                else:
+                    successful_dispersals += 1
+            except Exception as ex:
+                raise Exception(f"Dispersal #{i+1} was not successful with error {ex}")
 
         assert successful_dispersals <= rate_limit, "All consecutive dispersals were successful without any constraint"
 
@@ -57,11 +81,13 @@ class TestDosRobustness(StepsDataAvailability):
         for b in range(bursts):
             for i in range(spam_per_burst):
                 try:
-                    self.disperse_data(DATA_TO_DISPERSE[0], to_app_id(1), to_index(0), timeout_duration=0)
-                    successful_dispersals = i
+                    response = self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0), timeout_duration=0)
+                    if response.status_code == 429:
+                        break
+                    else:
+                        successful_dispersals += 1
                 except Exception as ex:
-                    logger.debug(f"Dispersal #{i+1} was not successful with error {ex}")
-                    break
+                    raise Exception(f"Dispersal #{i+1} was not successful with error {ex}")
 
             delay(waiting_intervals[b])
 
