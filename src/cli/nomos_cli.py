@@ -3,14 +3,13 @@ import os
 import re
 
 from src.data_storage import DS
-from src.libs.common import generate_log_prefix
+from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.cli.cli_vars import nomos_cli
 from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
-from src.steps.da import remove_padding
 
 logger = get_custom_logger(__name__)
 
@@ -66,16 +65,19 @@ class NomosCli:
             command=cmd,
         )
 
-        DS.nomos_nodes.append(self)
+        DS.client_nodes.append(self)
 
         match self._command:
             case "reconstruct":
                 decode_only = kwargs.get("decode_only", False)
-                return self.reconstruct(input_values=input_values, decode_only=decode_only)
+                return self.reconstruct(decode_only=decode_only)
+            case "client_node":
+                delay(3600)
+                return None
             case _:
-                return
+                return None
 
-    def reconstruct(self, input_values=None, decode_only=False):
+    def reconstruct(self, decode_only=False):
         keywords = ["Reconstructed data"]
 
         log_stream = self._container.logs(stream=True)
@@ -98,7 +100,7 @@ class NomosCli:
         result_bytes = remove_padding(result_bytes)
         result = bytes(result_bytes).decode("utf-8")
 
-        DS.nomos_nodes.remove(self)
+        DS.client_nodes.remove(self)
 
         return result
 
