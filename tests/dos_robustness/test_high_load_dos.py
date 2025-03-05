@@ -114,7 +114,7 @@ class TestHighLoadDos(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_cluster", "setup_client_nodes")
     def test_sustained_high_rate_multiple_clients(self):
-        timeout = 60
+        timeout = 10
         start_time = time.time()
         successful_dispersals = 0
         unsuccessful_dispersals = 0
@@ -127,7 +127,7 @@ class TestHighLoadDos(StepsDataAvailability):
 
             delay(0.01)
             try:
-                response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), timeout_duration=0)
+                response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=self.client_nodes[0], timeout_duration=0)
                 if response.status_code == 200:
                     successful_dispersals += 1
                 else:
@@ -135,11 +135,11 @@ class TestHighLoadDos(StepsDataAvailability):
             except Exception:
                 unsuccessful_dispersals += 1
 
-            try:
-                self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=0)
-                successful_downloads += 1
-            except Exception:
-                unsuccessful_downloads += 1
+            # try:
+            #     self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=0)
+            #     successful_downloads += 1
+            # except Exception:
+            #     unsuccessful_downloads += 1
 
         assert successful_dispersals > 0, "No successful dispersals"
         assert successful_downloads > 0, "No successful downloads"

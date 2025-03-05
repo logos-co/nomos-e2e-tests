@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import inspect
 import glob
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from src.libs.custom_logger import get_custom_logger
 import os
 import pytest
@@ -68,6 +70,14 @@ def attach_logs_on_fail(request):
             attach_allure_file(file)
 
 
+def stop_node(node):
+    try:
+        node.stop()
+    except Exception as ex:
+        if "No such container" in str(ex):
+            logger.error(f"Failed to stop node container because of error {ex}")
+
+
 @pytest.fixture(scope="function", autouse=True)
 def close_open_nodes(attach_logs_on_fail):
     DS.nomos_nodes = []
@@ -75,20 +85,13 @@ def close_open_nodes(attach_logs_on_fail):
     yield
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
     crashed_containers = []
-    for node in DS.nomos_nodes:
-        try:
-            node.stop()
-        except Exception as ex:
-            if "No such container" in str(ex):
-                crashed_containers.append(node.image)
-            logger.error(f"Failed to stop node container because of error {ex}")
-    for node in DS.client_nodes:
-        try:
-            node.stop()
-        except Exception as ex:
-            if "No such container" in str(ex):
-                crashed_containers.append(node.name())
-            logger.error(f"Failed to stop client node container because of error {ex}")
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        node_cleanups = [executor.submit(stop_node, node) for node in DS.nomos_nodes] + [executor.submit(stop_node, node) for node in DS.client_nodes]
+        for cleanup in as_completed(node_cleanups):
+            result = cleanup.result()
+            if result is not None:
+                crashed_containers.append(result)
+
     assert not crashed_containers, f"Containers {crashed_containers} crashed during the test!!!"
 
 

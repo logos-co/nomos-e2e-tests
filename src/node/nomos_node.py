@@ -126,6 +126,9 @@ class NomosNode:
     def name(self):
         return self._container_name
 
+    def api_port(self):
+        return self._tcp_port
+
     def check_nomos_log_errors(self, whitelist=None):
         keywords = LOG_ERROR_KEYWORDS
 

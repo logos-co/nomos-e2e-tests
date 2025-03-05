@@ -2,6 +2,7 @@ import json
 import os
 import re
 
+from src.api_clients.rest import REST
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger
@@ -35,6 +36,7 @@ class NomosCli:
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
+        self._api = None
 
         cwd = os.getcwd()
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
@@ -105,6 +107,10 @@ class NomosCli:
         DS.client_nodes.remove(self)
 
         return result
+
+    def set_rest_api(self, host, port):
+        logger.debug(f"Setting rest API object to host {host} port {port}")
+        self._api = REST(port, host)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
