@@ -86,7 +86,7 @@ def close_open_nodes(attach_logs_on_fail):
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
     crashed_containers = []
     with ThreadPoolExecutor(max_workers=30) as executor:
-        node_cleanups = [executor.submit(stop_node, node) for node in DS.nomos_nodes] + [executor.submit(stop_node, node) for node in DS.client_nodes]
+        node_cleanups = [executor.submit(stop_node, node) for node in DS.nomos_nodes + DS.client_nodes]
         for cleanup in as_completed(node_cleanups):
             result = cleanup.result()
             if result is not None:
