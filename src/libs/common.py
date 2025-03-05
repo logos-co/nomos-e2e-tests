@@ -42,7 +42,7 @@ def to_app_id(n: int) -> list:
 
 def random_divide_k(n, k):
     if n < k:
-        raise ValueError("n must be at least k to split into k parts.")
+        raise ValueError(f"n={n} must be at least k={k} to split into {k} parts")
     cuts = sorted(random.sample(range(1, n), k - 1))
     parts = [cuts[0]] + [cuts[i] - cuts[i - 1] for i in range(1, len(cuts))] + [n - cuts[-1]]
     return parts

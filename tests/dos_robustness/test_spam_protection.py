@@ -9,10 +9,10 @@ from src.test_data import DATA_TO_DISPERSE
 logger = get_custom_logger(__name__)
 
 
+@pytest.mark.usefixtures("setup_2_node_cluster")
 class TestSpamProtection(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_spam_protection_valid_uploads(self):
         num_samples = len(DATA_TO_DISPERSE)
         missing_dispersals = num_samples
@@ -28,7 +28,6 @@ class TestSpamProtection(StepsDataAvailability):
 
         assert missing_dispersals == 0, f"{missing_dispersals} dispersals were not successful"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_spam_protection_single_burst(self):
         rate_limit = 1000
         spam_per_burst = rate_limit + 10
@@ -45,7 +44,6 @@ class TestSpamProtection(StepsDataAvailability):
 
         assert successful_dispersals <= rate_limit, "All consecutive dispersals were successful without any constraint"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_spam_protection_random_bytes_single_burst(self):
         rate_limit = 1000
         spam_per_burst = rate_limit + 10
@@ -66,7 +64,6 @@ class TestSpamProtection(StepsDataAvailability):
 
         assert successful_dispersals <= rate_limit, "All consecutive dispersals were successful without any constraint"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_spam_protection_multiple_bursts(self):
         time_interval = 60
         rate_limit = 1000
