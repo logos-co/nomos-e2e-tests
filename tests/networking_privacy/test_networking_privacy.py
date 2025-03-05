@@ -23,7 +23,7 @@ class TestNetworkingPrivacy(StepsDataAvailability):
                 self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0))
                 successful_dispersals += 1
             except Exception as ex:
-                logger.warning(f"Dispersal #{i} was not successful with error {ex}")
+                logger.warning(f"Dispersal #{i+1} was not successful with error {ex}")
 
             if successful_dispersals == 10:
                 break
