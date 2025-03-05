@@ -2,15 +2,15 @@ import json
 import os
 import re
 
+from src.api_clients.rest import REST
 from src.data_storage import DS
-from src.libs.common import generate_log_prefix
+from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.cli.cli_vars import nomos_cli
 from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
-from src.steps.da import remove_padding
 
 logger = get_custom_logger(__name__)
 
@@ -36,6 +36,7 @@ class NomosCli:
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
+        self._api = None
 
         cwd = os.getcwd()
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
@@ -45,12 +46,15 @@ class NomosCli:
 
         self._port_map = {}
 
-        cmd = [NOMOS_CLI, self._command]
-        for flag in nomos_cli[self._command]["flags"]:
-            for f, indexes in flag.items():
-                cmd.append(f)
-                for j in indexes:
-                    cmd.append(input_values[j])
+        if self._command == "client_node":
+            cmd = ["tail", "-f", "/dev/null"]
+        else:
+            cmd = [NOMOS_CLI, self._command]
+            for flag in nomos_cli[self._command]["flags"]:
+                for f, indexes in flag.items():
+                    cmd.append(f)
+                    for j in indexes:
+                        cmd.append(input_values[j])
 
         logger.debug(f"NomosCli command to run {cmd}")
 
@@ -66,16 +70,18 @@ class NomosCli:
             command=cmd,
         )
 
-        DS.nomos_nodes.append(self)
+        DS.client_nodes.append(self)
 
         match self._command:
             case "reconstruct":
                 decode_only = kwargs.get("decode_only", False)
-                return self.reconstruct(input_values=input_values, decode_only=decode_only)
+                return self.reconstruct(decode_only=decode_only)
+            case "client_node":
+                return None
             case _:
-                return
+                return None
 
-    def reconstruct(self, input_values=None, decode_only=False):
+    def reconstruct(self, decode_only=False):
         keywords = ["Reconstructed data"]
 
         log_stream = self._container.logs(stream=True)
@@ -98,9 +104,13 @@ class NomosCli:
         result_bytes = remove_padding(result_bytes)
         result = bytes(result_bytes).decode("utf-8")
 
-        DS.nomos_nodes.remove(self)
+        DS.client_nodes.remove(self)
 
         return result
+
+    def set_rest_api(self, host, port):
+        logger.debug(f"Setting rest API object to host {host} port {port}")
+        self._api = REST(port, host)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
@@ -109,3 +119,6 @@ class NomosCli:
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
         self._container = kill(self._container)
+
+    def name(self):
+        return self._container_name

@@ -4,6 +4,7 @@ import shutil
 
 import pytest
 
+from src.cli.nomos_cli import NomosCli
 from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
@@ -43,6 +44,7 @@ class StepsCommon:
     def cluster_setup(self):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
         self.main_nodes = []
+        self.client_nodes = []
 
     @pytest.fixture(scope="function")
     def setup_2_node_cluster(self, request):
@@ -87,3 +89,17 @@ class StepsCommon:
             raise
 
         delay(5)
+
+    @pytest.fixture(scope="function")
+    def setup_client_nodes(self, request):
+        logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
+
+        if hasattr(request, "param"):
+            num_clients = request.param
+        else:
+            num_clients = 5
+
+        for i in range(num_clients):
+            cli_node = NomosCli(command="client_node")
+            cli_node.run()
+            self.client_nodes.append(cli_node)

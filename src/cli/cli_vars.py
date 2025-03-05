@@ -8,4 +8,11 @@ nomos_cli = {
         "ports": [],
         "entrypoint": "",
     },
+    "client_node": {
+        "image": NOMOS_IMAGE,
+        "flags": [],
+        "volumes": [],
+        "ports": [],
+        "entrypoint": "",
+    },
 }
