@@ -121,6 +121,8 @@ class TestHighLoadDos(StepsDataAvailability):
         successful_downloads = 0
         unsuccessful_downloads = 0
 
+        self.client_nodes[0].run()
+
         while True:
             if time.time() - start_time > timeout:
                 break

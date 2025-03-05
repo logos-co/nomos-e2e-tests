@@ -44,12 +44,15 @@ class NomosCli:
 
         self._port_map = {}
 
-        cmd = [NOMOS_CLI, self._command]
-        for flag in nomos_cli[self._command]["flags"]:
-            for f, indexes in flag.items():
-                cmd.append(f)
-                for j in indexes:
-                    cmd.append(input_values[j])
+        if self._command == "client_node":
+            cmd = ["tail", "-f", "/dev/null"]
+        else:
+            cmd = [NOMOS_CLI, self._command]
+            for flag in nomos_cli[self._command]["flags"]:
+                for f, indexes in flag.items():
+                    cmd.append(f)
+                    for j in indexes:
+                        cmd.append(input_values[j])
 
         logger.debug(f"NomosCli command to run {cmd}")
 
@@ -72,7 +75,6 @@ class NomosCli:
                 decode_only = kwargs.get("decode_only", False)
                 return self.reconstruct(decode_only=decode_only)
             case "client_node":
-                delay(3600)
                 return None
             case _:
                 return None

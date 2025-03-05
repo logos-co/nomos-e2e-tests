@@ -44,7 +44,7 @@ class StepsCommon:
     def cluster_setup(self):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
         self.main_nodes = []
-        self.cli_nodes = []
+        self.client_nodes = []
 
     @pytest.fixture(scope="function")
     def setup_2_node_cluster(self, request):
@@ -101,6 +101,6 @@ class StepsCommon:
 
         for i in range(num_clients):
             cli_node = NomosCli(command="client_node")
-            self.cli_nodes.append(cli_node)
+            self.client_nodes.append(cli_node)
 
         delay(1)
