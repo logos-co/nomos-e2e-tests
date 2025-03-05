@@ -75,7 +75,7 @@ def stop_node(node):
         node.stop()
     except Exception as ex:
         if "No such container" in str(ex):
-            logger.error(f"Failed to stop node container because of error {ex}")
+            logger.error(f"Failed to stop container {node.name()} because of error {ex}")
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -84,15 +84,16 @@ def close_open_nodes(attach_logs_on_fail):
     DS.client_nodes = []
     yield
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
-    crashed_containers = []
+    failed_cleanups = []
     with ThreadPoolExecutor(max_workers=30) as executor:
         node_cleanups = [executor.submit(stop_node, node) for node in DS.nomos_nodes + DS.client_nodes]
         for cleanup in as_completed(node_cleanups):
-            result = cleanup.result()
-            if result is not None:
-                crashed_containers.append(result)
+            try:
+                cleanup.result()
+            except Exception as ex:
+                failed_cleanups.append(ex)
 
-    assert not crashed_containers, f"Containers {crashed_containers} crashed during the test!!!"
+    assert not failed_cleanups, f"Container cleanup failed with {failed_cleanups} !!!"
 
 
 @pytest.fixture(scope="function", autouse=True)
