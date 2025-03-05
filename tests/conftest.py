@@ -71,6 +71,7 @@ def attach_logs_on_fail(request):
 @pytest.fixture(scope="function", autouse=True)
 def close_open_nodes(attach_logs_on_fail):
     DS.nomos_nodes = []
+    DS.client_nodes = []
     yield
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
     crashed_containers = []
@@ -80,7 +81,14 @@ def close_open_nodes(attach_logs_on_fail):
         except Exception as ex:
             if "No such container" in str(ex):
                 crashed_containers.append(node.image)
-            logger.error(f"Failed to stop container because of error {ex}")
+            logger.error(f"Failed to stop node container because of error {ex}")
+    for node in DS.client_nodes:
+        try:
+            node.stop()
+        except Exception as ex:
+            if "No such container" in str(ex):
+                crashed_containers.append(node.name())
+            logger.error(f"Failed to stop client node container because of error {ex}")
     assert not crashed_containers, f"Containers {crashed_containers} crashed during the test!!!"
 
 

@@ -91,8 +91,8 @@ class StepsCommon:
         delay(5)
 
     @pytest.fixture(scope="function")
-    def init_client_nodes(self, request):
-        logger.debug(f"Running fixture init: {inspect.currentframe().f_code.co_name}")
+    def setup_client_nodes(self, request):
+        logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
 
         if hasattr(request, "param"):
             num_clients = request.param
@@ -101,6 +101,5 @@ class StepsCommon:
 
         for i in range(num_clients):
             cli_node = NomosCli(command="client_node")
+            cli_node.run()
             self.client_nodes.append(cli_node)
-
-        delay(1)

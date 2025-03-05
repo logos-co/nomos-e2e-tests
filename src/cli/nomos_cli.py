@@ -113,3 +113,6 @@ class NomosCli:
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
         self._container = kill(self._container)
+
+    def name(self):
+        return self._container_name

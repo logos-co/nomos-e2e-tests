@@ -112,7 +112,7 @@ class TestHighLoadDos(StepsDataAvailability):
         assert failure_ratio_w < 0.20, f"Dispersal failure ratio {failure_ratio_w} too high"
         assert failure_ratio_r < 0.20, f"Data download failure ratio {failure_ratio_r} too high"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster", "init_client_nodes")
+    @pytest.mark.usefixtures("setup_2_node_cluster", "setup_client_nodes")
     def test_sustained_high_rate_multiple_clients(self):
         timeout = 60
         start_time = time.time()
@@ -120,8 +120,6 @@ class TestHighLoadDos(StepsDataAvailability):
         unsuccessful_dispersals = 0
         successful_downloads = 0
         unsuccessful_downloads = 0
-
-        self.client_nodes[0].run()
 
         while True:
             if time.time() - start_time > timeout:
