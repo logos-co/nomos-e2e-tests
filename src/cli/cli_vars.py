@@ -10,7 +10,7 @@ nomos_cli = {
     },
     "client_node": {
         "image": NOMOS_IMAGE,
-        "flags": [],
+        "flags": [{"tail": [], "-f": [], "/dev/null": []}],
         "volumes": [],
         "ports": [],
         "entrypoint": "",

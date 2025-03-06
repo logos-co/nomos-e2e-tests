@@ -47,14 +47,15 @@ class NomosCli:
         self._port_map = {}
 
         if self._command == "client_node":
-            cmd = ["tail", "-f", "/dev/null"]
+            cmd = []
         else:
             cmd = [NOMOS_CLI, self._command]
-            for flag in nomos_cli[self._command]["flags"]:
-                for f, indexes in flag.items():
-                    cmd.append(f)
-                    for j in indexes:
-                        cmd.append(input_values[j])
+
+        for flag in nomos_cli[self._command]["flags"]:
+            for f, indexes in flag.items():
+                cmd.append(f)
+                for j in indexes:
+                    cmd.append(input_values[j])
 
         logger.debug(f"NomosCli command to run {cmd}")
 
@@ -109,7 +110,6 @@ class NomosCli:
         return result
 
     def set_rest_api(self, host, port):
-        logger.debug(f"Setting rest API object to host {host} port {port}")
         self._api = REST(port, host)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
