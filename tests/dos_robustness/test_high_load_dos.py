@@ -128,13 +128,16 @@ class TestHighLoadDos(StepsDataAvailability):
             delay(0.01)
             try:
                 response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=self.client_nodes[0], timeout_duration=0)
+                logger.debug(f"RESPONSE {response}")
                 if response.status_code == 200:
                     successful_dispersals += 1
                 else:
                     unsuccessful_dispersals += 1
-            except Exception:
+            except Exception as ex:
+                logger.debug(f"EXCEPTION {ex}")
                 unsuccessful_dispersals += 1
 
+            delay(3600)
             # try:
             #     self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=0)
             #     successful_downloads += 1

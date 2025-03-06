@@ -47,7 +47,7 @@ class StepsDataAvailability(StepsCommon):
 
     @allure.step
     def disperse_data(self, data, app_id, index, client_node=None, timeout_duration=65, utf8=True, padding=True):
-        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def disperse(my_self=self):
             response = []
             request = prepare_dispersal_request(data, app_id, index, utf8=utf8, padding=padding)
@@ -57,7 +57,7 @@ class StepsDataAvailability(StepsCommon):
                 if client_node is None:
                     response = executor.send_dispersal_request(request)
                 else:
-                    response = client_node.set_rest_api(executor.name(), executor.api_port())
+                    client_node.set_rest_api(executor.name(), executor.api_port_internal())
                     response = client_node.send_dispersal_request(request)
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
@@ -71,7 +71,7 @@ class StepsDataAvailability(StepsCommon):
 
     @allure.step
     def get_data_range(self, node, app_id, start, end, timeout_duration=45):
-        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(1), reraise=True)
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def get_range():
             response = []
             query = prepare_get_range_request(app_id, start, end)

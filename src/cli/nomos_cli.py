@@ -122,3 +122,9 @@ class NomosCli:
 
     def name(self):
         return self._container_name
+
+    def send_dispersal_request(self, data):
+        return self._api.send_dispersal_request(data)
+
+    def send_get_data_range_request(self, data):
+        return self._api.send_get_range(data)

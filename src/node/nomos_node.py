@@ -129,6 +129,12 @@ class NomosNode:
     def api_port(self):
         return self._tcp_port
 
+    def api_port_internal(self):
+        for internal_port, external_port in self._port_map.items():
+            if str(external_port).replace("/tcp", "") == self._tcp_port:
+                return internal_port.replace("/tcp", "")
+        return None
+
     def check_nomos_log_errors(self, whitelist=None):
         keywords = LOG_ERROR_KEYWORDS
 
