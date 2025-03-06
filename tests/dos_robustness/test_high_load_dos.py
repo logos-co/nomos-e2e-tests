@@ -1,3 +1,4 @@
+import random
 import time
 
 import pytest
@@ -125,24 +126,23 @@ class TestHighLoadDos(StepsDataAvailability):
             if time.time() - start_time > timeout:
                 break
 
+            dispersal_cl, download_cl = random.choice(self.client_nodes), random.choice(self.client_nodes)
+
             delay(0.01)
             try:
-                response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=self.client_nodes[0], timeout_duration=0)
-                logger.debug(f"RESPONSE {response}")
+                response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=dispersal_cl, timeout_duration=0)
                 if response.status_code == 200:
                     successful_dispersals += 1
                 else:
                     unsuccessful_dispersals += 1
-            except Exception as ex:
-                logger.debug(f"EXCEPTION {ex}")
+            except Exception:
                 unsuccessful_dispersals += 1
 
-            delay(3600)
-            # try:
-            #     self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=0)
-            #     successful_downloads += 1
-            # except Exception:
-            #     unsuccessful_downloads += 1
+            try:
+                self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), client_node=download_cl, timeout_duration=0)
+                successful_downloads += 1
+            except Exception:
+                unsuccessful_downloads += 1
 
         assert successful_dispersals > 0, "No successful dispersals"
         assert successful_downloads > 0, "No successful downloads"
