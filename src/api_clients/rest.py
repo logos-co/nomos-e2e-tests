@@ -6,9 +6,9 @@ logger = get_custom_logger(__name__)
 
 
 class REST(BaseClient):
-    def __init__(self, rest_port, rest_host="127.0.0.1"):
-        self._rest_port = rest_port
-        self._rest_host = rest_host
+    def __init__(self, port, host="127.0.0.1"):
+        self._rest_port = port
+        self._rest_host = host
 
     def rest_call(self, method, endpoint, payload=None):
         url = f"http://{self._rest_host}:{self._rest_port}/{endpoint}"
