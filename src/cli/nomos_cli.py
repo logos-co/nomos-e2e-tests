@@ -2,6 +2,7 @@ import json
 import os
 import re
 
+from src.api_clients.invalid_rest import INVALID_REST
 from src.api_clients.rest import REST
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix, delay, remove_padding
@@ -111,6 +112,9 @@ class NomosCli:
 
     def set_rest_api(self, host, port):
         self._api = REST(port, host)
+
+    def set_invalid_rest_api(self, host, port):
+        self._api = INVALID_REST(port, host)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
