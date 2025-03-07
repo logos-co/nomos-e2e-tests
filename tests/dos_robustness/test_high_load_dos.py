@@ -187,7 +187,6 @@ class TestHighLoadDos(StepsDataAvailability):
                     unsuccessful_dispersals += 1
 
             try:
-                invalid = random.choice([True, False])
                 self.get_data_range(
                     self.node2, to_app_id(1), to_index(0), to_index(5), client_node=download_cl, timeout_duration=0, send_invalid=invalid
                 )
