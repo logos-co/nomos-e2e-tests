@@ -1,5 +1,4 @@
 import allure
-from requests.packages import target
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from src.env_vars import NOMOS_EXECUTOR
@@ -46,7 +45,7 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
-    def disperse_data(self, data, app_id, index, client_node=None, timeout_duration=65, utf8=True, padding=True):
+    def disperse_data(self, data, app_id, index, client_node=None, timeout_duration=65, utf8=True, padding=True, send_invalid=False):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def disperse(my_self=self):
             response = []
@@ -57,7 +56,10 @@ class StepsDataAvailability(StepsCommon):
                 if client_node is None:
                     response = executor.send_dispersal_request(request)
                 else:
-                    client_node.set_rest_api(executor.name(), executor.api_port_internal())
+                    if send_invalid:
+                        client_node.set_invalid_rest_api(executor.name(), executor.api_port_internal())
+                    else:
+                        client_node.set_rest_api(executor.name(), executor.api_port_internal())
                     response = client_node.send_dispersal_request(request)
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
@@ -70,7 +72,7 @@ class StepsDataAvailability(StepsCommon):
         return disperse()
 
     @allure.step
-    def get_data_range(self, node, app_id, start, end, client_node=None, timeout_duration=45):
+    def get_data_range(self, node, app_id, start, end, client_node=None, timeout_duration=45, send_invalid=False):
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def get_range():
             response = []
@@ -79,7 +81,10 @@ class StepsDataAvailability(StepsCommon):
                 if client_node is None:
                     response = node.send_get_data_range_request(query)
                 else:
-                    client_node.set_rest_api(node.name(), node.api_port_internal())
+                    if send_invalid:
+                        client_node.set_invalid_rest_api(node.name(), node.api_port_internal())
+                    else:
+                        client_node.set_rest_api(node.name(), node.api_port_internal())
                     response = client_node.send_get_data_range_request(query)
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
