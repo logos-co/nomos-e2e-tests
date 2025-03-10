@@ -10,6 +10,8 @@ cd nomos-e2e-tests
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+mkdir -p kzgrs
+wget https://raw.githubusercontent.com/logos-co/nomos-node/master/tests/kzgrs/kzgrs_test_params -O kzgrs/kzgrs_test_params
 pre-commit install
 (optional) Overwrite default vars from src/env_vars.py via cli env vars or by adding a .env file
 pytest
