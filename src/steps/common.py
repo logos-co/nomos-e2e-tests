@@ -4,7 +4,7 @@ import shutil
 
 import pytest
 
-from src.cli.nomos_cli import NomosCli
+from src.client.nomos_cli import NomosCli
 from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger

@@ -9,7 +9,7 @@ from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
-from src.cli.cli_vars import nomos_cli
+from src.client.client_vars import nomos_cli
 from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
 
@@ -25,7 +25,7 @@ class NomosCli:
         if command not in nomos_cli:
             raise ValueError("Unknown command provided")
 
-        logger.debug(f"Cli is going to be initialized with this config {nomos_cli[command]}")
+        logger.debug(f"NomosCli is going to be initialized with this config {nomos_cli[command]}")
         self._command = command
         self._image_name = nomos_cli[command]["image"]
         self._internal_ports = nomos_cli[command]["ports"]
@@ -47,10 +47,7 @@ class NomosCli:
 
         self._port_map = {}
 
-        if self._command == "client_node":
-            cmd = []
-        else:
-            cmd = [NOMOS_CLI, self._command]
+        cmd = [NOMOS_CLI, self._command]
 
         for flag in nomos_cli[self._command]["flags"]:
             for f, indexes in flag.items():
@@ -78,8 +75,6 @@ class NomosCli:
             case "reconstruct":
                 decode_only = kwargs.get("decode_only", False)
                 return self.reconstruct(decode_only=decode_only)
-            case "client_node":
-                return None
             case _:
                 return None
 
@@ -113,9 +108,6 @@ class NomosCli:
     def set_rest_api(self, host, port):
         self._api = REST(port, host)
 
-    def set_invalid_rest_api(self, host, port):
-        self._api = INVALID_REST(port, host)
-
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
         self._container = stop(self._container)
@@ -126,9 +118,3 @@ class NomosCli:
 
     def name(self):
         return self._container_name
-
-    def send_dispersal_request(self, data):
-        return self._api.send_dispersal_request(data)
-
-    def send_get_data_range_request(self, data):
-        return self._api.send_get_range(data)

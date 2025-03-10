@@ -22,11 +22,13 @@ CFGSYNC = "cfgsync"
 DEFAULT_IMAGE = "ghcr.io/logos-co/nomos-node:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_IMAGE)
 
+HTTP_PROXY_IMAGE = get_env_var("HTTP_PROXY_IMAGE", "bitnami/configurable-http-proxy:latest")
+
 NODE_1 = get_env_var("NODE_1", NOMOS)
 NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)
 NODE_3 = get_env_var("NODE_3", CFGSYNC)
 
-NOMOS_CLI = "/usr/bin/nomos-cli"
+NOMOS_CLI = "/usr/bin/nomos-client"
 
 ADDITIONAL_NODES = get_env_var("ADDITIONAL_NODES", f"{NOMOS},{NOMOS}")
 # more nodes need to follow the NODE_X pattern

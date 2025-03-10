@@ -11,7 +11,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pre-commit install
-(optional) Overwrite default vars from src/env_vars.py via cli env vars or by adding a .env file
+(optional) Overwrite default vars from src/env_vars.py via env vars or by adding a .env file
 pytest
 ```
 
