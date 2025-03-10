@@ -37,7 +37,6 @@ class NomosCli:
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
-        self._api = None
 
         cwd = os.getcwd()
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
@@ -48,7 +47,6 @@ class NomosCli:
         self._port_map = {}
 
         cmd = [NOMOS_CLI, self._command]
-
         for flag in nomos_cli[self._command]["flags"]:
             for f, indexes in flag.items():
                 cmd.append(f)
@@ -76,7 +74,7 @@ class NomosCli:
                 decode_only = kwargs.get("decode_only", False)
                 return self.reconstruct(decode_only=decode_only)
             case _:
-                return None
+                return
 
     def reconstruct(self, decode_only=False):
         keywords = ["Reconstructed data"]
@@ -104,9 +102,6 @@ class NomosCli:
         DS.client_nodes.remove(self)
 
         return result
-
-    def set_rest_api(self, host, port):
-        self._api = REST(port, host)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):

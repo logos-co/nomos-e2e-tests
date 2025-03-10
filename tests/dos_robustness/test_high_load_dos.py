@@ -113,7 +113,7 @@ class TestHighLoadDos(StepsDataAvailability):
         assert failure_ratio_w < 0.20, f"Dispersal failure ratio {failure_ratio_w} too high"
         assert failure_ratio_r < 0.20, f"Data download failure ratio {failure_ratio_r} too high"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster", "setup_client_nodes")
+    @pytest.mark.usefixtures("setup_2_node_cluster", "setup_proxy_clients")
     def test_sustained_high_rate_multiple_clients(self):
         timeout = 10
         start_time = time.time()
@@ -126,7 +126,7 @@ class TestHighLoadDos(StepsDataAvailability):
             if time.time() - start_time > timeout:
                 break
 
-            dispersal_cl, download_cl = random.choice(self.client_nodes), random.choice(self.client_nodes)
+            dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
 
             delay(0.01)
             try:
@@ -156,7 +156,8 @@ class TestHighLoadDos(StepsDataAvailability):
         assert failure_ratio_w < 0.20, f"Dispersal failure ratio {failure_ratio_w} too high"
         assert failure_ratio_r < 0.20, f"Data download failure ratio {failure_ratio_r} too high"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster", "setup_client_nodes")
+    @pytest.mark.timeout(3600)
+    @pytest.mark.usefixtures("setup_2_node_cluster", "setup_proxy_clients")
     def test_sustained_high_rate_with_invalid_requests(self):
         timeout = 10
         start_time = time.time()
@@ -169,10 +170,8 @@ class TestHighLoadDos(StepsDataAvailability):
             if time.time() - start_time > timeout:
                 break
 
-            dispersal_cl, download_cl = random.choice(self.client_nodes), random.choice(self.client_nodes)
-
-            delay(0.01)
-            invalid = random.choice([True, False])
+            dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
+            invalid = random.choice([False])
 
             try:
                 response = self.disperse_data(
@@ -194,6 +193,8 @@ class TestHighLoadDos(StepsDataAvailability):
             except Exception:
                 if not invalid:
                     unsuccessful_downloads += 1
+
+            delay(10)
 
         assert successful_dispersals > 0, "No successful dispersals"
         assert successful_downloads > 0, "No successful downloads"

@@ -54,8 +54,8 @@ def alter_get_range_query(query):
 
 
 class INVALID_REST(REST):
-    def __init__(self, port, host="127.0.0.1"):
-        super().__init__(port, host)
+    def __init__(self, rest_port):
+        super().__init__(rest_port)
 
     def send_dispersal_request(self, data):
         data = alter_dispersal_data(data)

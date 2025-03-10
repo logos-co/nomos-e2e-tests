@@ -6,17 +6,16 @@ logger = get_custom_logger(__name__)
 
 
 class REST(BaseClient):
-    def __init__(self, port, host="127.0.0.1"):
-        self._rest_port = port
-        self._rest_host = host
+    def __init__(self, rest_port):
+        self._rest_port = rest_port
 
     def rest_call(self, method, endpoint, payload=None):
-        url = f"http://{self._rest_host}:{self._rest_port}/{endpoint}"
+        url = f"http://localhost:{self._rest_port}/{endpoint}"
         headers = {"Content-Type": "application/json", "Connection": "close"}
         return self.make_request(method, url, headers=headers, data=payload)
 
     def rest_call_text(self, method, endpoint, payload=None):
-        url = f"http://{self._rest_host}:{self._rest_port}/{endpoint}"
+        url = f"http://localhost:{self._rest_port}/{endpoint}"
         headers = {"accept": "text/plain", "Connection": "close"}
         return self.make_request(method, url, headers=headers, data=payload)
 

@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-from src.cli.nomos_cli import NomosCli
+from src.client.nomos_cli import NomosCli
 from src.libs.common import delay, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability

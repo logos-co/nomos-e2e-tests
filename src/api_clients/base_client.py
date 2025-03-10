@@ -9,11 +9,7 @@ logger = get_custom_logger(__name__)
 class BaseClient:
     def make_request(self, method, url, headers=None, data=None):
         self.log_request_as_curl(method, url, headers, data)
-        try:
-            response = requests.request(method.upper(), url, headers=headers, data=data, timeout=API_REQUEST_TIMEOUT)
-        except Exception as ex:
-            logger.error(f"HERE An error occurred: {ex}. ")
-
+        response = requests.request(method.upper(), url, headers=headers, data=data, timeout=API_REQUEST_TIMEOUT)
         try:
             response.raise_for_status()
         except requests.HTTPError as http_err:

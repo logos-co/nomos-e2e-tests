@@ -76,11 +76,11 @@ class ProxyClient:
 
         DS.client_nodes.append(self)
 
-    def set_rest_api(self, host, port):
-        self._api = REST(port, host)
+    def set_rest_api(self):
+        self._api = REST(self._tcp_port)
 
-    def set_invalid_rest_api(self, host, port):
-        self._api = INVALID_REST(port, host)
+    def set_invalid_rest_api(self):
+        self._api = INVALID_REST(self._tcp_port)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
