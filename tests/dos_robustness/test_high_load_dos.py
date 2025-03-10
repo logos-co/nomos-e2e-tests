@@ -156,10 +156,9 @@ class TestHighLoadDos(StepsDataAvailability):
         assert failure_ratio_w < 0.20, f"Dispersal failure ratio {failure_ratio_w} too high"
         assert failure_ratio_r < 0.20, f"Data download failure ratio {failure_ratio_r} too high"
 
-    @pytest.mark.timeout(3600)
     @pytest.mark.usefixtures("setup_2_node_cluster", "setup_proxy_clients")
     def test_sustained_high_rate_with_invalid_requests(self):
-        timeout = 10
+        timeout = 60
         start_time = time.time()
         successful_dispersals = 0
         unsuccessful_dispersals = 0
@@ -194,7 +193,7 @@ class TestHighLoadDos(StepsDataAvailability):
                 if not invalid:
                     unsuccessful_downloads += 1
 
-            delay(10)
+            delay(0.01)
 
         assert successful_dispersals > 0, "No successful dispersals"
         assert successful_downloads > 0, "No successful downloads"
