@@ -146,10 +146,9 @@ class NomosNode:
 
         logger.info(f"Printing log matches for {self.name()}")
         if matches_found:
-            for match in matches_found:
-                if len(matches_found[match]) != 0:
-                    for log_line in matches_found[match]:
-                        logger.debug(f"Log line matching keyword '{match}': {log_line}")
+            for keyword, log_lines in matches_found.items():
+                for line in log_lines:
+                    logger.debug(f"Log line matching keyword '{keyword}': {line}")
         else:
             logger.debug("No keyword matches found in the logs.")
 
