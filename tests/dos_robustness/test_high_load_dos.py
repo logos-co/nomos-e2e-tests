@@ -170,7 +170,7 @@ class TestHighLoadDos(StepsDataAvailability):
                 break
 
             dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
-            invalid = random.choice([False])
+            invalid = random.choice([False, True])
 
             delay(0.01)
             try:

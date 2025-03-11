@@ -31,6 +31,7 @@ def alter_dispersal_data(data):
     choice = random.choice([alter_data_content, alter_metadata, add_random_property])
     choice()
 
+    logger.debug(f"Data for dispersal request has been altered to: {data}")
     return data
 
 
@@ -50,16 +51,18 @@ def alter_get_range_query(query):
     choice = random.choice([swap_range, alter_app_id])
     choice()
 
+    logger.debug(f"Get-range query has been altered to: {query}")
     return query
 
 
-class INVALID_REST(REST):
+class InvalidRest(REST):
     def __init__(self, rest_port):
         super().__init__(rest_port)
 
     def send_dispersal_request(self, data):
         data = alter_dispersal_data(data)
-        return self.rest_call("post", "disperse-data", json.dumps(data))
+        response = self.rest_call("post", "disperse-data", json.dumps(data))
+        return response
 
     def send_get_range(self, query):
         query = alter_get_range_query(query)

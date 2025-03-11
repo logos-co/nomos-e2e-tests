@@ -2,8 +2,6 @@ import json
 import os
 import re
 
-from src.api_clients.invalid_rest import INVALID_REST
-from src.api_clients.rest import REST
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger

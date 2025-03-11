@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from src.api_clients.invalid_rest import INVALID_REST
+from src.api_clients.invalid_rest import InvalidRest
 from src.api_clients.rest import REST
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix, delay, remove_padding
@@ -81,7 +81,7 @@ class ProxyClient:
         self._api = REST(self._tcp_port)
 
     def set_invalid_rest_api(self):
-        self._api = INVALID_REST(self._tcp_port)
+        self._api = InvalidRest(self._tcp_port)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
