@@ -23,6 +23,8 @@ LOG_ERROR_KEYWORDS = [
     "goexit",
     "race condition",
     "double free",
+    "error",
+    "warn",
 ]
 
 DATA_TO_DISPERSE = [

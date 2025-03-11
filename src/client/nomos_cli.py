@@ -77,15 +77,18 @@ class NomosCli:
                 return
 
     def reconstruct(self, decode_only=False):
-        keywords = ["Reconstructed data"]
+        keyword = "Reconstructed data"
+        keywords = [keyword]
 
         log_stream = self._container.logs(stream=True)
 
         matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False, log_stream)
-        assert len(matches) > 0, f"Reconstructed data not found {matches}"
+        assert len(matches[keyword]) > 0, f"Reconstructed data not found {matches[keyword]}"
+
+        logger.debug(f"Reconstructed data match found {matches[keyword]}")
 
         # Use regular expression that captures the byte list after "Reconstructed data"
-        result = re.sub(r".*Reconstructed data\s*(\[[^\]]+\]).*", r"\1", matches[keywords[0]][0])
+        result = re.sub(r".*Reconstructed data\s*(\[[^\]]+\]).*", r"\1", matches[keyword][0])
 
         result_bytes = []
         try:

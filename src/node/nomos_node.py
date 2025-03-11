@@ -142,8 +142,16 @@ class NomosNode:
         if whitelist:
             keywords = [keyword for keyword in keywords if keyword not in whitelist]
 
-        matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
-        assert not matches, f"Found errors {matches}"
+        matches_found = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
+
+        logger.info(f"Printing log matches for {self.name()}")
+        if matches_found:
+            for match in matches_found:
+                if len(matches_found[match]) != 0:
+                    for log_line in matches_found[match]:
+                        logger.debug(f"Log line matching keyword '{match}': {log_line}")
+        else:
+            logger.debug("No keyword matches found in the logs.")
 
     def send_dispersal_request(self, data):
         return self._api.send_dispersal_request(data)

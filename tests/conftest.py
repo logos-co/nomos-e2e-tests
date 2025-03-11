@@ -97,7 +97,7 @@ def close_open_nodes(attach_logs_on_fail):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def check_nomos_log_errors():
+def check_nomos_log_errors(request):
     yield
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
     for node in DS.nomos_nodes:

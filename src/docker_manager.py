@@ -142,35 +142,35 @@ class DockerManager:
         for keyword in keywords:
             if use_regex:
                 if re.search(keyword, line, re.IGNORECASE):
-                    matches[keyword].append(line.strip())
+                    matches[keyword].append(line)
             else:
                 if keyword.lower() in line.lower():
-                    matches[keyword].append(line.strip())
+                    matches[keyword].append(line)
 
         return matches
 
     def search_log_for_keywords(self, log_path, keywords, use_regex=False, log_stream=None):
-        matches = {}
+        matches = {keyword: [] for keyword in keywords}
 
         # Read from stream
         if log_stream is not None:
             for line in log_stream:
-                matches = self.find_keywords_in_line(keywords, line.decode("utf-8"), use_regex=use_regex)
+                line_matches = self.find_keywords_in_line(keywords, line.decode("utf-8"), use_regex=use_regex)
+                for keyword, result in line_matches.items():
+                    matches[keyword].extend(result)
 
         else:
             # Open the log file and search line by line
             with open(log_path, "r") as log_file:
                 for line in log_file:
-                    matches = self.find_keywords_in_line(keywords, line, use_regex=use_regex)
+                    line_matches = self.find_keywords_in_line(keywords, line, use_regex=use_regex)
+                    for keyword, result in line_matches.items():
+                        matches[keyword].extend(result)
 
         # Check if there were any matches
-        if any(matches[keyword] for keyword in keywords):
-            for keyword, lines in matches.items():
-                if lines:
-                    logger.debug(f"Found matches for keyword '{keyword}': {lines}")
+        if any(matches_list for matches_list in matches.values()):
             return matches
         else:
-            logger.debug("No keywords found in the nomos logs.")
             return None
 
 
