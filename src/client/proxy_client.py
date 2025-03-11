@@ -74,6 +74,7 @@ class ProxyClient:
             command=cmd,
         )
 
+        logger.info(f"Started container {self._container_name} from image {self._image_name}.")
         DS.client_nodes.append(self)
 
     def set_rest_api(self):

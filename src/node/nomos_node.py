@@ -78,8 +78,7 @@ class NomosNode:
             name=self._container_name,
         )
 
-        logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
-
+        logger.info(f"Started container {self._container_name} from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
         DS.nomos_nodes.append(self)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)

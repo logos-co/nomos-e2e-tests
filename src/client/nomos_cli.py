@@ -67,6 +67,7 @@ class NomosCli:
             command=cmd,
         )
 
+        logger.info(f"Started container {self._container_name} from image {self._image_name}.")
         DS.client_nodes.append(self)
 
         match self._command:
