@@ -152,20 +152,16 @@ class DockerManager:
     def search_log_for_keywords(self, log_path, keywords, use_regex=False, log_stream=None):
         matches = {keyword: [] for keyword in keywords}
 
-        # Read from stream
-        if log_stream is not None:
-            for line in log_stream:
-                line_matches = self.find_keywords_in_line(keywords, line.decode("utf-8"), use_regex=use_regex)
-                for keyword, result in line_matches.items():
-                    matches[keyword].extend(result)
+        if log_stream is None:
+            log_stream = open(log_path, "r")
 
-        else:
-            # Open the log file and search line by line
-            with open(log_path, "r") as log_file:
-                for line in log_file:
-                    line_matches = self.find_keywords_in_line(keywords, line, use_regex=use_regex)
-                    for keyword, result in line_matches.items():
-                        matches[keyword].extend(result)
+        for line in log_stream:
+            # Decode line if it is a byte object not str
+            if hasattr(line, "decode"):
+                line = line.decode("utf-8")
+            line_matches = self.find_keywords_in_line(keywords, line, use_regex=use_regex)
+            for keyword, result in line_matches.items():
+                matches[keyword].extend(result)
 
         # Check if there were any matches
         if any(matches_list for matches_list in matches.values()):
