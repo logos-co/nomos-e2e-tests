@@ -172,6 +172,7 @@ class TestHighLoadDos(StepsDataAvailability):
             dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
             invalid = random.choice([False])
 
+            delay(0.01)
             try:
                 response = self.disperse_data(
                     DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=dispersal_cl, timeout_duration=0, send_invalid=invalid
@@ -192,8 +193,6 @@ class TestHighLoadDos(StepsDataAvailability):
             except Exception:
                 if not invalid:
                     unsuccessful_downloads += 1
-
-            delay(0.01)
 
         assert successful_dispersals > 0, "No successful dispersals"
         assert successful_downloads > 0, "No successful downloads"
