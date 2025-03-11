@@ -29,9 +29,10 @@ def alter_dispersal_data(data):
         data[random_str] = list(generate_random_bytes(random_n))
 
     choice = random.choice([alter_data_content, alter_metadata, add_random_property])
+    logger.debug(f"Data for dispersal request has been altered with: {choice.__name__}")
+
     choice()
 
-    logger.debug(f"Data for dispersal request has been altered to: {data}")
     return data
 
 
@@ -49,9 +50,10 @@ def alter_get_range_query(query):
         query["app_id"] = list(generate_random_bytes(random_n))
 
     choice = random.choice([swap_range, alter_app_id])
+    logger.debug(f"Get-range query has been altered with: {choice.__name__}")
+
     choice()
 
-    logger.debug(f"Get-range query has been altered to: {query}")
     return query
 
 
