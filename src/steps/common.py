@@ -14,7 +14,7 @@ from jinja2 import Template
 logger = get_custom_logger(__name__)
 
 
-def prepare_cluster_config(node_count, subnetwork_size=2):
+def prepare_cluster_config(node_count, subnetwork_size=2, dispersal_factor=2):
     cwd = os.getcwd()
     config_dir = "cluster_config"
 
@@ -22,7 +22,7 @@ def prepare_cluster_config(node_count, subnetwork_size=2):
         template_content = file.read()
     template = Template(template_content)
 
-    rendered = template.render(num_hosts=node_count, subnet_size=subnetwork_size)
+    rendered = template.render(num_hosts=node_count, subnet_size=subnetwork_size, dispersal_factor=dispersal_factor)
 
     with open(f"{cwd}/{config_dir}/cfgsync.yaml", "w") as outfile:
         outfile.write(rendered)
@@ -38,6 +38,10 @@ def ensure_nodes_ready(nodes):
         node.ensure_ready()
 
 
+def get_param_or_default(request, param_name, default_value):
+    return request.param.get(param_name, default_value) if hasattr(request, "param") else default_value
+
+
 class StepsCommon:
     @pytest.fixture(scope="function", autouse=True)
     def cluster_setup(self):
@@ -49,12 +53,10 @@ class StepsCommon:
     def setup_2_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
 
-        if hasattr(request, "param"):
-            subnet_size = request.param
-        else:
-            subnet_size = 2
+        subnet_size = get_param_or_default(request, "subnet_size", 2)
+        dispersal_factor = get_param_or_default(request, "dispersal_factor", 2)
+        prepare_cluster_config(2, subnet_size, dispersal_factor)
 
-        prepare_cluster_config(2, subnet_size)
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")
         self.node3 = NomosNode(NOMOS_EXECUTOR, "nomos_node_1")
@@ -73,12 +75,10 @@ class StepsCommon:
     def setup_4_node_cluster(self, request):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
 
-        if hasattr(request, "param"):
-            subnet_size = request.param
-        else:
-            subnet_size = 2
+        subnet_size = get_param_or_default(request, "subnet_size", 4)
+        dispersal_factor = get_param_or_default(request, "dispersal_factor", 1)
+        prepare_cluster_config(4, subnet_size, dispersal_factor)
 
-        prepare_cluster_config(4, subnet_size)
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")
         self.node3 = NomosNode(NOMOS, "nomos_node_1")
