@@ -56,11 +56,7 @@ class StepsDataAvailability(StepsCommon):
                 if client_node is None:
                     response = executor.send_dispersal_request(request)
                 else:
-                    if send_invalid:
-                        client_node.set_invalid_rest_api()
-                    else:
-                        client_node.set_rest_api()
-                    response = client_node.send_dispersal_request(request)
+                    response = client_node.send_dispersal_request(request, send_invalid=send_invalid)
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
@@ -81,11 +77,7 @@ class StepsDataAvailability(StepsCommon):
                 if client_node is None:
                     response = node.send_get_data_range_request(query)
                 else:
-                    if send_invalid:
-                        client_node.set_invalid_rest_api()
-                    else:
-                        client_node.set_rest_api()
-                    response = client_node.send_get_data_range_request(query)
+                    response = client_node.send_get_data_range_request(query, send_invalid=send_invalid)
             except Exception as ex:
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 

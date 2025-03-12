@@ -1,6 +1,4 @@
-import json
 import os
-import re
 
 from src.api_clients.invalid_rest import InvalidRest
 from src.api_clients.rest import REST
@@ -33,6 +31,7 @@ class ProxyClient:
         self._container_name = container_name
         self._container = None
         self._api = None
+        self._invalid_api = None
 
         cwd = os.getcwd()
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
@@ -44,6 +43,7 @@ class ProxyClient:
         self._external_ports = self._docker_manager.generate_ports(count=1)
         self._tcp_port = self._external_ports[0]
         self._api = REST(self._tcp_port)
+        self._invalid_api = InvalidRest(self._tcp_port)
 
         logger.debug(f"Internal ports {self._internal_ports}")
 
@@ -77,12 +77,6 @@ class ProxyClient:
         logger.info(f"Started container {self._container_name} from image {self._image_name}.")
         DS.client_nodes.append(self)
 
-    def set_rest_api(self):
-        self._api = REST(self._tcp_port)
-
-    def set_invalid_rest_api(self):
-        self._api = InvalidRest(self._tcp_port)
-
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
         self._container = stop(self._container)
@@ -94,8 +88,14 @@ class ProxyClient:
     def name(self):
         return self._container_name
 
-    def send_dispersal_request(self, data):
+    def send_dispersal_request(self, data, send_invalid=False):
+        if send_invalid:
+            return self._invalid_api.send_dispersal_request(data)
+
         return self._api.send_dispersal_request(data)
 
-    def send_get_data_range_request(self, data):
+    def send_get_data_range_request(self, data, send_invalid=False):
+        if send_invalid:
+            return self._invalid_api.send_get_range(data)
+
         return self._api.send_get_range(data)

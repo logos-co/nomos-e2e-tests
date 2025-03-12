@@ -20,11 +20,12 @@ class REST(BaseClient):
         return self.make_request(method, url, headers=headers, data=payload)
 
     def info(self):
-        status_response = self.rest_call("get", "cryptarchia/info")
-        return status_response.json()
+        response = self.rest_call("get", "cryptarchia/info")
+        return response.json()
 
     def send_dispersal_request(self, data):
-        return self.rest_call("post", "disperse-data", json.dumps(data))
+        response = self.rest_call("post", "disperse-data", json.dumps(data))
+        return response
 
     def send_get_range(self, query):
         response = self.rest_call("post", "da/get-range", json.dumps(query))
