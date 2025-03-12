@@ -8,20 +8,18 @@ from src.steps.da import StepsDataAvailability, logger
 from src.test_data import DATA_TO_DISPERSE
 
 
+@pytest.mark.usefixtures("setup_2_node_cluster")
 class TestHighLoadDos(StepsDataAvailability):
     main_nodes = []
     client_nodes = []
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_sustained_high_rate_upload(self):
         timeout = 60
         start_time = time.time()
         successful_dispersals = 0
         unsuccessful_dispersals = 0
 
-        while True:
-            if time.time() - start_time > timeout:
-                break
+        while time.time() - start_time < timeout:
 
             delay(0.01)
             try:
@@ -40,7 +38,6 @@ class TestHighLoadDos(StepsDataAvailability):
 
         assert failure_ratio < 0.20, f"Dispersal failure ratio {failure_ratio} too high"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_sustained_high_rate_download(self):
         timeout = 60
         successful_downloads = 0
@@ -54,9 +51,7 @@ class TestHighLoadDos(StepsDataAvailability):
         delay(5)
         start_time = time.time()
 
-        while True:
-            if time.time() - start_time > timeout:
-                break
+        while time.time() - start_time < timeout:
 
             delay(0.01)
             try:
@@ -72,7 +67,6 @@ class TestHighLoadDos(StepsDataAvailability):
 
         assert failure_ratio < 0.20, f"Data download failure ratio {failure_ratio} too high"
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_sustained_high_rate_mixed(self):
         timeout = 60
         start_time = time.time()
@@ -81,9 +75,7 @@ class TestHighLoadDos(StepsDataAvailability):
         successful_downloads = 0
         unsuccessful_downloads = 0
 
-        while True:
-            if time.time() - start_time > timeout:
-                break
+        while time.time() - start_time < timeout:
 
             delay(0.01)
             try:
@@ -122,9 +114,7 @@ class TestHighLoadDos(StepsDataAvailability):
         successful_downloads = 0
         unsuccessful_downloads = 0
 
-        while True:
-            if time.time() - start_time > timeout:
-                break
+        while time.time() - start_time < timeout:
 
             dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
 
@@ -165,9 +155,7 @@ class TestHighLoadDos(StepsDataAvailability):
         successful_downloads = 0
         unsuccessful_downloads = 0
 
-        while True:
-            if time.time() - start_time > timeout:
-                break
+        while time.time() - start_time < timeout:
 
             dispersal_cl, download_cl = random.choice(self.client_nodes[1::2]), random.choice(self.client_nodes[::2])
             invalid = random.choice([False, True])
