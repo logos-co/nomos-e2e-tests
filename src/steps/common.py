@@ -1,9 +1,9 @@
 import inspect
 import os
-import shutil
 
 import pytest
 
+from src.client.proxy_client import ProxyClient
 from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
@@ -43,6 +43,7 @@ class StepsCommon:
     def cluster_setup(self):
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
         self.main_nodes = []
+        self.client_nodes = []
 
     @pytest.fixture(scope="function")
     def setup_2_node_cluster(self, request):
@@ -87,3 +88,23 @@ class StepsCommon:
             raise
 
         delay(5)
+
+    @pytest.fixture(scope="function")
+    def setup_proxy_clients(self, request):
+        logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
+
+        assert len(self.main_nodes) == 3, "There should be two Nomos nodes running already"
+
+        if hasattr(request, "param"):
+            num_clients = request.param
+        else:
+            num_clients = 10
+
+        assert num_clients % 2 == 0, "num_clients must be an even number"
+
+        # Every even proxy client for get-range, every odd for dispersal
+        for i in range(num_clients):
+            proxy_client = ProxyClient()
+            default_target = [f"http://{self.main_nodes[1 + i % 2].name()}:18080"]
+            proxy_client.run(input_values=default_target)
+            self.client_nodes.append(proxy_client)

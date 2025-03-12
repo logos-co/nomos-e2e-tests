@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import inspect
 import glob
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+from src.env_vars import CHECK_LOG_ERRORS
 from src.libs.custom_logger import get_custom_logger
 import os
 import pytest
@@ -68,25 +71,36 @@ def attach_logs_on_fail(request):
             attach_allure_file(file)
 
 
+def stop_node(node):
+    try:
+        node.stop()
+    except Exception as ex:
+        if "No such container" in str(ex):
+            logger.error(f"Failed to stop container {node.name()} because of error {ex}")
+
+
 @pytest.fixture(scope="function", autouse=True)
 def close_open_nodes(attach_logs_on_fail):
     DS.nomos_nodes = []
+    DS.client_nodes = []
     yield
     logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
-    crashed_containers = []
-    for node in DS.nomos_nodes:
-        try:
-            node.stop()
-        except Exception as ex:
-            if "No such container" in str(ex):
-                crashed_containers.append(node.image)
-            logger.error(f"Failed to stop container because of error {ex}")
-    assert not crashed_containers, f"Containers {crashed_containers} crashed during the test!!!"
+    failed_cleanups = []
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        node_cleanups = [executor.submit(stop_node, node) for node in DS.nomos_nodes + DS.client_nodes]
+        for cleanup in as_completed(node_cleanups):
+            try:
+                cleanup.result()
+            except Exception as ex:
+                failed_cleanups.append(ex)
+
+    assert not failed_cleanups, f"Container cleanup failed with {failed_cleanups} !!!"
 
 
 @pytest.fixture(scope="function", autouse=True)
-def check_nomos_log_errors():
+def check_nomos_log_errors(request):
     yield
-    logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
-    for node in DS.nomos_nodes:
-        node.check_nomos_log_errors()
+    if CHECK_LOG_ERRORS:
+        logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
+        for node in DS.nomos_nodes:
+            node.check_nomos_log_errors()

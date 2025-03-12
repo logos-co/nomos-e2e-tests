@@ -3,14 +3,13 @@ import os
 import re
 
 from src.data_storage import DS
-from src.libs.common import generate_log_prefix
+from src.libs.common import generate_log_prefix, delay, remove_padding
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
-from src.cli.cli_vars import nomos_cli
+from src.client.client_vars import nomos_cli
 from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR, NOMOS_CLI
-from src.steps.da import remove_padding
 
 logger = get_custom_logger(__name__)
 
@@ -24,7 +23,7 @@ class NomosCli:
         if command not in nomos_cli:
             raise ValueError("Unknown command provided")
 
-        logger.debug(f"Cli is going to be initialized with this config {nomos_cli[command]}")
+        logger.debug(f"NomosCli is going to be initialized with this config {nomos_cli[command]}")
         self._command = command
         self._image_name = nomos_cli[command]["image"]
         self._internal_ports = nomos_cli[command]["ports"]
@@ -66,25 +65,29 @@ class NomosCli:
             command=cmd,
         )
 
-        DS.nomos_nodes.append(self)
+        logger.info(f"Started container {self._container_name} from image {self._image_name}.")
+        DS.client_nodes.append(self)
 
         match self._command:
             case "reconstruct":
                 decode_only = kwargs.get("decode_only", False)
-                return self.reconstruct(input_values=input_values, decode_only=decode_only)
+                return self.reconstruct(decode_only=decode_only)
             case _:
                 return
 
-    def reconstruct(self, input_values=None, decode_only=False):
-        keywords = ["Reconstructed data"]
+    def reconstruct(self, decode_only=False):
+        keyword = "Reconstructed data"
+        keywords = [keyword]
 
         log_stream = self._container.logs(stream=True)
 
         matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False, log_stream)
-        assert len(matches) > 0, f"Reconstructed data not found {matches}"
+        assert len(matches[keyword]) > 0, f"Reconstructed data not found {matches[keyword]}"
+
+        logger.debug(f"Reconstructed data match found {matches[keyword]}")
 
         # Use regular expression that captures the byte list after "Reconstructed data"
-        result = re.sub(r".*Reconstructed data\s*(\[[^\]]+\]).*", r"\1", matches[keywords[0]][0])
+        result = re.sub(r".*Reconstructed data\s*(\[[^\]]+\]).*", r"\1", matches[keyword][0])
 
         result_bytes = []
         try:
@@ -98,7 +101,7 @@ class NomosCli:
         result_bytes = remove_padding(result_bytes)
         result = bytes(result_bytes).decode("utf-8")
 
-        DS.nomos_nodes.remove(self)
+        DS.client_nodes.remove(self)
 
         return result
 
@@ -109,3 +112,6 @@ class NomosCli:
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
         self._container = kill(self._container)
+
+    def name(self):
+        return self._container_name

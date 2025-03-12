@@ -15,17 +15,19 @@ def get_env_var(var_name, default=None):
 
 
 # Configuration constants. Need to be upercase to appear in reports
+DEFAULT_NOMOS_IMAGE = "ghcr.io/logos-co/nomos-node:testnet"
+NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
+
+DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
+HTTP_PROXY_IMAGE = get_env_var("HTTP_PROXY_IMAGE", DEFAULT_PROXY_IMAGE)
+
 NOMOS = "nomos"
 NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
 
-DEFAULT_IMAGE = "ghcr.io/logos-co/nomos-node:testnet"
-
 NODE_1 = get_env_var("NODE_1", NOMOS)
 NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)
 NODE_3 = get_env_var("NODE_3", CFGSYNC)
-
-NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_IMAGE)
 
 NOMOS_CLI = "/usr/bin/nomos-cli"
 
@@ -38,3 +40,4 @@ IP_RANGE = get_env_var("IP_RANGE", "172.19.0.0/24")
 GATEWAY = get_env_var("GATEWAY", "172.19.0.1")
 RUNNING_IN_CI = get_env_var("CI")
 API_REQUEST_TIMEOUT = get_env_var("API_REQUEST_TIMEOUT", 20)
+CHECK_LOG_ERRORS = get_env_var("CHECK_LOG_ERRORS", False)

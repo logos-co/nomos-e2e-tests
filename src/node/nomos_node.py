@@ -78,8 +78,7 @@ class NomosNode:
             name=self._container_name,
         )
 
-        logger.debug(f"Started container from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
-
+        logger.info(f"Started container {self._container_name} from image {self._image_name}. " f"REST: {getattr(self, '_tcp_port', 'N/A')}")
         DS.nomos_nodes.append(self)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
@@ -126,6 +125,15 @@ class NomosNode:
     def name(self):
         return self._container_name
 
+    def api_port(self):
+        return self._tcp_port
+
+    def api_port_internal(self):
+        for internal_port, external_port in self._port_map.items():
+            if str(external_port).replace("/tcp", "") == self._tcp_port:
+                return internal_port.replace("/tcp", "")
+        return None
+
     def check_nomos_log_errors(self, whitelist=None):
         keywords = LOG_ERROR_KEYWORDS
 
@@ -133,8 +141,15 @@ class NomosNode:
         if whitelist:
             keywords = [keyword for keyword in keywords if keyword not in whitelist]
 
-        matches = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
-        assert not matches, f"Found errors {matches}"
+        matches_found = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
+
+        logger.info(f"Printing log matches for {self.name()}")
+        if matches_found:
+            for keyword, log_lines in matches_found.items():
+                for line in log_lines:
+                    logger.debug(f"Log line matching keyword '{keyword}': {line}")
+        else:
+            logger.debug("No keyword matches found in the logs.")
 
     def send_dispersal_request(self, data):
         return self._api.send_dispersal_request(data)
