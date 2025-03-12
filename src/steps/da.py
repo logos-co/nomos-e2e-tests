@@ -61,7 +61,6 @@ class StepsDataAvailability(StepsCommon):
                 assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
 
             assert hasattr(response, "status_code"), "Missing status_code"
-            assert response.status_code in (200, 429), "Unexpected status code"
 
             return response
 

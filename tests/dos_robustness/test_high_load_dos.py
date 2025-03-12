@@ -24,14 +24,12 @@ class TestHighLoadDos(StepsDataAvailability):
             delay(0.01)
             try:
                 response = self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0), timeout_duration=0)
-                if response.status_code == 200:
-                    successful_dispersals += 1
-                else:
-                    unsuccessful_dispersals += 1
-            except Exception:
+                assert response.status_code == 200, f"Dispersal failed with status code {response.status_code}"
+                successful_dispersals += 1
+            except AssertionError:
                 unsuccessful_dispersals += 1
 
-        assert successful_dispersals > 0, "No successful dispersals"
+        assert successful_dispersals > 0, "No successful dispersal"
 
         failure_ratio = unsuccessful_dispersals / successful_dispersals
         logger.info(f"Unsuccessful dispersals ratio: {failure_ratio}")
@@ -43,10 +41,8 @@ class TestHighLoadDos(StepsDataAvailability):
         successful_downloads = 0
         unsuccessful_downloads = 0
 
-        try:
-            self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0))
-        except Exception as ex:
-            raise Exception(f"Initial dispersal was not successful with error {ex}")
+        response = self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0))
+        assert response.status_code == 200, "Initial dispersal was not successful"
 
         delay(5)
         start_time = time.time()
@@ -80,11 +76,9 @@ class TestHighLoadDos(StepsDataAvailability):
             delay(0.01)
             try:
                 response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), timeout_duration=0)
-                if response.status_code == 200:
-                    successful_dispersals += 1
-                else:
-                    unsuccessful_dispersals += 1
-            except Exception:
+                assert response.status_code == 200, f"Dispersal failed with status code {response.status_code}"
+                successful_dispersals += 1
+            except AssertionError:
                 unsuccessful_dispersals += 1
 
             try:
@@ -93,8 +87,8 @@ class TestHighLoadDos(StepsDataAvailability):
             except Exception:
                 unsuccessful_downloads += 1
 
-        assert successful_dispersals > 0, "No successful dispersals"
-        assert successful_downloads > 0, "No successful downloads"
+        assert successful_dispersals > 0, "No successful dispersal"
+        assert successful_downloads > 0, "No successful download"
 
         failure_ratio_w = unsuccessful_dispersals / successful_dispersals
         failure_ratio_r = unsuccessful_downloads / successful_downloads
@@ -121,11 +115,9 @@ class TestHighLoadDos(StepsDataAvailability):
             delay(0.01)
             try:
                 response = self.disperse_data(DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=dispersal_cl, timeout_duration=0)
-                if response.status_code == 200:
-                    successful_dispersals += 1
-                else:
-                    unsuccessful_dispersals += 1
-            except Exception:
+                assert response.status_code == 200, f"Dispersal failed with status code {response.status_code}"
+                successful_dispersals += 1
+            except AssertionError:
                 unsuccessful_dispersals += 1
 
             try:
@@ -134,8 +126,8 @@ class TestHighLoadDos(StepsDataAvailability):
             except Exception:
                 unsuccessful_downloads += 1
 
-        assert successful_dispersals > 0, "No successful dispersals"
-        assert successful_downloads > 0, "No successful downloads"
+        assert successful_dispersals > 0, "No successful dispersal"
+        assert successful_downloads > 0, "No successful download"
 
         failure_ratio_w = unsuccessful_dispersals / successful_dispersals
         failure_ratio_r = unsuccessful_downloads / successful_downloads
@@ -165,11 +157,9 @@ class TestHighLoadDos(StepsDataAvailability):
                 response = self.disperse_data(
                     DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=dispersal_cl, timeout_duration=0, send_invalid=invalid
                 )
-                if response.status_code == 200:
-                    successful_dispersals += 1
-                elif not invalid:
-                    unsuccessful_dispersals += 1
-            except Exception:
+                assert response.status_code == 200, f"Dispersal failed with status code {response.status_code}"
+                successful_dispersals += 1
+            except AssertionError:
                 if not invalid:
                     unsuccessful_dispersals += 1
 
@@ -182,8 +172,8 @@ class TestHighLoadDos(StepsDataAvailability):
                 if not invalid:
                     unsuccessful_downloads += 1
 
-        assert successful_dispersals > 0, "No successful dispersals"
-        assert successful_downloads > 0, "No successful downloads"
+        assert successful_dispersals > 0, "No successful dispersal"
+        assert successful_downloads > 0, "No successful download"
 
         failure_ratio_w = unsuccessful_dispersals / successful_dispersals
         failure_ratio_r = unsuccessful_downloads / successful_downloads
