@@ -14,7 +14,7 @@ class TestLargeVolume(StepsDataAvailability):
         "setup_4_node_cluster,raw_data_size",
         [
             ({"subnet_size": 4, "dispersal_factor": 1}, 50),  # => ~~0.5kB
-            ({"subnet_size": 64, "dispersal_factor": 32}, 800),  # => ~~ 4kB
+            ({"subnet_size": 64, "dispersal_factor": 16}, 800),  # => ~~ 4kB
             ({"subnet_size": 2048, "dispersal_factor": 512}, 51 * 1024),  # => ~~244kB, spec limit: 248kB
         ],
         indirect=["setup_4_node_cluster"],
