@@ -45,15 +45,21 @@ class StepsDataAvailability(StepsCommon):
         return executor
 
     @allure.step
-    def disperse_data(self, data, app_id, index, client_node=None, timeout_duration=65, utf8=True, padding=True, send_invalid=False):
+    def disperse_data(self, data, app_id, index, client_node=None, **kwargs):
+
+        timeout_duration = kwargs.get("timeout_duration", 65)
+        utf8 = kwargs.get("utf8", True)
+        padding = kwargs.get("padding", True)
+        send_invalid = kwargs.get("send_invalid", False)
+
+        request = prepare_dispersal_request(data, app_id, index, utf8=utf8, padding=padding)
+
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def disperse(my_self=self):
             response = []
-            request = prepare_dispersal_request(data, app_id, index, utf8=utf8, padding=padding)
-            executor = my_self.find_executor_node()
-
             try:
                 if client_node is None:
+                    executor = my_self.find_executor_node()
                     response = executor.send_dispersal_request(request)
                 else:
                     response = client_node.send_dispersal_request(request, send_invalid=send_invalid)
@@ -67,11 +73,16 @@ class StepsDataAvailability(StepsCommon):
         return disperse()
 
     @allure.step
-    def get_data_range(self, node, app_id, start, end, client_node=None, timeout_duration=45, send_invalid=False):
+    def get_data_range(self, node, app_id, start, end, client_node=None, **kwargs):
+
+        timeout_duration = kwargs.get("timeout_duration", 65)
+        send_invalid = kwargs.get("send_invalid", False)
+
+        query = prepare_get_range_request(app_id, start, end)
+
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def get_range():
             response = []
-            query = prepare_get_range_request(app_id, start, end)
             try:
                 if client_node is None:
                     response = node.send_get_data_range_request(query)

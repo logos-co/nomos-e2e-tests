@@ -14,6 +14,11 @@ pre-commit install
 (optional) Overwrite default vars from src/env_vars.py via env vars or by adding a .env file
 pytest
 ```
+Set optional environment variable to search logs for errors after each tests:
+```shell
+export CHECK_LOG_ERRORS=True
+```
+
 
 ## License
 

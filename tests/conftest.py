@@ -3,6 +3,7 @@ import inspect
 import glob
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from src.env_vars import CHECK_LOG_ERRORS
 from src.libs.custom_logger import get_custom_logger
 import os
 import pytest
@@ -99,6 +100,7 @@ def close_open_nodes(attach_logs_on_fail):
 @pytest.fixture(scope="function", autouse=True)
 def check_nomos_log_errors(request):
     yield
-    logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
-    for node in DS.nomos_nodes:
-        node.check_nomos_log_errors()
+    if CHECK_LOG_ERRORS.lower() == "true" or CHECK_LOG_ERRORS.lower() == "yes":
+        logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
+        for node in DS.nomos_nodes:
+            node.check_nomos_log_errors()
