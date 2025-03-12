@@ -76,11 +76,12 @@ class StepsDataAvailability(StepsCommon):
     def get_data_range(self, node, app_id, start, end, client_node=None, **kwargs):
 
         timeout_duration = kwargs.get("timeout_duration", 65)
+        interval = kwargs.get("interval", 0.1)
         send_invalid = kwargs.get("send_invalid", False)
 
         query = prepare_get_range_request(app_id, start, end)
 
-        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
         def get_range():
             response = []
             try:
