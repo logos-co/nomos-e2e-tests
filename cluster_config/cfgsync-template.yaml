@@ -10,7 +10,7 @@ active_slot_coeff: 0.9
 subnetwork_size: {{ subnet_size }}
 dispersal_factor: 2
 num_samples: 1
-num_subnets: 2
+num_subnets: {{ subnet_size }}
 old_blobs_check_interval_secs: 5
 blobs_validity_duration_secs: 60
 global_params_path: "/kzgrs_test_params"
@@ -18,6 +18,15 @@ min_dispersal_peers: 1
 min_replication_peers: 1
 monitor_failure_time_window_secs: 5
 balancer_interval_secs: 5
+# Dispersal mempool publish strategy
+mempool_publish_strategy: !SampleSubnetworks
+  sample_threshold: {{ subnet_size }}
+  timeout:
+    secs: 2
+    nanos: 0
+  cooldown:
+    secs: 0
+    nanos: 100000000
 
 # Tracing
 tracing_settings:
