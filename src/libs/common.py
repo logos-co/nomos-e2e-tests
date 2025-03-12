@@ -54,6 +54,25 @@ def generate_random_bytes(n=31):
     return os.urandom(n)
 
 
+def generate_text_data(target_size):
+    words = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor"]
+    result = []
+
+    current_size = 0
+    while current_size <= target_size:
+        word = random.choice(words)
+        result.append(word)
+        current_size = len(" ".join(result).encode("utf-8"))
+
+    text_data = " ".join(result)
+    while len(text_data.encode("utf-8")) > target_size:
+        text_data = text_data[:-1]
+
+    logger.debug(f"Raw data size: {len(text_data.encode("utf-8"))}\n\t{text_data}")
+
+    return text_data
+
+
 def add_padding(orig_bytes):
     """
     Pads a list of bytes (integers in [0..255]) using a PKCS#7-like scheme:
