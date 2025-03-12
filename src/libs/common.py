@@ -1,8 +1,11 @@
+import math
 import random
 import string
 import uuid
 from datetime import datetime
 from time import sleep
+
+from faker import Faker
 from src.libs.custom_logger import get_custom_logger
 import os
 import allure
@@ -55,17 +58,11 @@ def generate_random_bytes(n=31):
 
 
 def generate_text_data(target_size):
-    words = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor"]
-    result = []
+    faker = Faker()
+    text_data = faker.text(max_nb_chars=math.floor(target_size * 1.2))  # 20% more than target size
+    text_data = " ".join(text_data.splitlines())  # remove newlines
 
-    current_size = 0
-    while current_size <= target_size:
-        word = random.choice(words)
-        result.append(word)
-        current_size = len(" ".join(result).encode("utf-8"))
-
-    text_data = " ".join(result)
-    while len(text_data.encode("utf-8")) > target_size:
+    while len(text_data.encode("utf-8")) > target_size:  # trim to exact size
         text_data = text_data[:-1]
 
     logger.debug(f"Raw data size: {len(text_data.encode("utf-8"))}\n\t{text_data}")
