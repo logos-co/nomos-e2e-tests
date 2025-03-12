@@ -100,7 +100,7 @@ def close_open_nodes(attach_logs_on_fail):
 @pytest.fixture(scope="function", autouse=True)
 def check_nomos_log_errors(request):
     yield
-    if CHECK_LOG_ERRORS.lower() == "true" or CHECK_LOG_ERRORS.lower() == "yes":
+    if CHECK_LOG_ERRORS:
         logger.debug(f"Running fixture teardown: {inspect.currentframe().f_code.co_name}")
         for node in DS.nomos_nodes:
             node.check_nomos_log_errors()
