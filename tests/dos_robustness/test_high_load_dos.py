@@ -101,7 +101,7 @@ class TestHighLoadDos(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_cluster", "setup_proxy_clients")
     def test_sustained_high_rate_multiple_clients(self):
-        timeout = 10
+        timeout = 60
         start_time = time.time()
         successful_dispersals = 0
         unsuccessful_dispersals = 0
