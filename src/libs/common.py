@@ -1,8 +1,11 @@
+import math
 import random
 import string
 import uuid
 from datetime import datetime
 from time import sleep
+
+from faker import Faker
 from src.libs.custom_logger import get_custom_logger
 import os
 import allure
@@ -52,6 +55,19 @@ def generate_random_bytes(n=31):
     if n < 0:
         raise ValueError("Input must be an unsigned integer (non-negative)")
     return os.urandom(n)
+
+
+def generate_text_data(target_size):
+    faker = Faker()
+    text_data = faker.text(max_nb_chars=math.floor(target_size * 1.2))  # 20% more than target size
+    text_data = " ".join(text_data.splitlines())  # remove newlines
+
+    while len(text_data.encode("utf-8")) > target_size:  # trim to exact size
+        text_data = text_data[:-1]
+
+    logger.debug(f"Raw data size: {len(text_data.encode("utf-8"))}\n\t{text_data}")
+
+    return text_data
 
 
 def add_padding(orig_bytes):

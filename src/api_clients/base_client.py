@@ -9,6 +9,7 @@ logger = get_custom_logger(__name__)
 class BaseClient:
     def make_request(self, method, url, headers=None, data=None):
         self.log_request_as_curl(method, url, headers, data)
+        self.print_request_size(data)
         response = requests.request(method.upper(), url, headers=headers, data=data, timeout=API_REQUEST_TIMEOUT)
         try:
             response.raise_for_status()
@@ -35,3 +36,8 @@ class BaseClient:
         headers_str_for_log = " ".join([f'-H "{key}: {value}"' for key, value in headers.items()]) if headers else ""
         curl_cmd = f"curl -v -X {method.upper()} \"{url}\" {headers_str_for_log} -d '{data}'"
         logger.info(curl_cmd)
+
+    def print_request_size(self, data):
+        body_size = len(data) if data else 0
+        body_kb = body_size / 1024
+        logger.debug(f"Body size: {body_kb:.2f}kB")

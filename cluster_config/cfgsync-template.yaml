@@ -8,7 +8,7 @@ active_slot_coeff: 0.9
 
 # DaConfig related parameters
 subnetwork_size: {{ subnet_size }}
-dispersal_factor: 2
+dispersal_factor: {{ dispersal_factor }}
 num_samples: 1
 num_subnets: {{ subnet_size }}
 old_blobs_check_interval_secs: 5
