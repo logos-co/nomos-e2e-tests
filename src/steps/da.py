@@ -29,6 +29,9 @@ def prepare_get_range_request(app_id, start_index, end_index):
 
 
 def response_contains_data(response):
+    if response is None:
+        return False
+
     for index, blobs in response:
         if len(blobs) != 0:
             return True

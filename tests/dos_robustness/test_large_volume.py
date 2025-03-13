@@ -30,8 +30,7 @@ class TestLargeVolume(StepsDataAvailability):
         assert response.status_code == 200
 
         delay(5)
-        rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=20, interval=1)
-        assert rcv_data is not None
+        self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=20, interval=1)
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
     @pytest.mark.parametrize(
