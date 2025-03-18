@@ -35,6 +35,7 @@ class NomosCli:
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
+        self._stop_event = None
 
         cwd = os.getcwd()
         self._volumes = [cwd + "/" + volume for volume in self._volumes]
@@ -53,7 +54,7 @@ class NomosCli:
 
         logger.debug(f"NomosCli command to run {cmd}")
 
-        self._container = self._docker_manager.start_container(
+        self._container, self._stop_event = self._docker_manager.start_container(
             self._docker_manager.image,
             port_bindings=self._port_map,
             args=None,
@@ -107,11 +108,11 @@ class NomosCli:
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def stop(self):
-        self._container = stop(self._container)
+        self._container = stop(self._container, self._stop_event)
 
     @retry(stop=stop_after_delay(5), wait=wait_fixed(0.1), reraise=True)
     def kill(self):
-        self._container = kill(self._container)
+        self._container = kill(self._container, self._stop_event)
 
     def name(self):
         return self._container_name

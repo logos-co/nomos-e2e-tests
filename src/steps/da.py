@@ -59,15 +59,16 @@ class StepsDataAvailability(StepsCommon):
 
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(0.1), reraise=True)
         def disperse(my_self=self):
-            response = []
             try:
                 if client_node is None:
                     executor = my_self.find_executor_node()
                     response = executor.send_dispersal_request(request)
                 else:
                     response = client_node.send_dispersal_request(request, send_invalid=send_invalid)
+
             except Exception as ex:
-                assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+                logger.error(f"Exception while dispersing data: {ex}")
+                raise
 
             assert hasattr(response, "status_code"), "Missing status_code"
 
@@ -86,14 +87,14 @@ class StepsDataAvailability(StepsCommon):
 
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
         def get_range():
-            response = []
             try:
                 if client_node is None:
                     response = node.send_get_data_range_request(query)
                 else:
                     response = client_node.send_get_data_range_request(query, send_invalid=send_invalid)
             except Exception as ex:
-                assert "Bad Request" in str(ex) or "Internal Server Error" in str(ex)
+                logger.error(f"Exception while retrieving data: {ex}")
+                raise
 
             assert response_contains_data(response), "Get data range response is empty"
 
