@@ -72,13 +72,14 @@ class DockerManager:
             logger.debug(f"Docker container run failed with exception {ex}")
 
         logger.debug(f"Container started with ID {container.short_id}. Setting up logs at {log_path}")
-        log_thread = threading.Thread(target=self._log_container_output, args=(container, log_path))
+        stop_event = threading.Event()
+        log_thread = threading.Thread(target=self._log_container_output, args=(container, log_path, stop_event))
         log_thread.daemon = True
         log_thread.start()
 
-        return container
+        return container, stop_event
 
-    def _log_container_output(self, container, log_path):
+    def _log_container_output(self, container, log_path, stop_event):
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
         retry_count = 0
         start_time = time.time()
@@ -102,6 +103,8 @@ class DockerManager:
                     except (APIError, IOError) as e:
                         retry_count += 1
                         if retry_count >= 5:
+                            if stop_event.is_set():
+                                return
                             logger.error(f"Max retries reached for container {container.short_id}. Exiting log stream.")
                             return
                         time.sleep(0.2)
@@ -170,10 +173,11 @@ class DockerManager:
             return None
 
 
-def stop(container):
+def stop(container, stop_event):
     if container:
         logger.debug(f"Stopping container with id {container.short_id}")
         container.stop()
+        stop_event.set()
         try:
             container.remove()
         except:
@@ -183,10 +187,11 @@ def stop(container):
         return None
 
 
-def kill(container):
+def kill(container, stop_event):
     if container:
         logger.debug(f"Killing container with id {container.short_id}")
         container.kill()
+        stop_event.set()
         try:
             container.remove()
         except:
