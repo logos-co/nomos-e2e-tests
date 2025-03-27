@@ -1,6 +1,4 @@
 import json
-import random
-
 import pytest
 
 from src.client.nomos_cli import NomosCli
@@ -67,3 +65,10 @@ class TestDataIntegrity(StepsDataAvailability):
         decoded_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json], decode_only=True)
 
         assert DATA_TO_DISPERSE[1] == decoded_data, "Retrieved data are not same with original data"
+
+    @pytest.mark.usefixtures("setup_2_node_cluster")
+    def test_da_disperse_empty_data(self):
+        empty_data = b""
+        response = self.disperse_data(empty_data, to_app_id(1), to_index(0), utf8=False, padding=False, timeout_duration=0)
+
+        assert response.status_code == 400, "Dispersal of empty data should be rejected as bad request"
