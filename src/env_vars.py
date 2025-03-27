@@ -15,7 +15,7 @@ def get_env_var(var_name, default=None):
 
 
 # Configuration constants. Need to be upercase to appear in reports
-DEFAULT_NOMOS_IMAGE = "ghcr.io/logos-co/nomos-node:testnet"
+DEFAULT_NOMOS_IMAGE = "ghcr.io/logos-co/nomos:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
 
 DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
