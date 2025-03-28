@@ -61,12 +61,12 @@ class InvalidRest(REST):
     def __init__(self, rest_port):
         super().__init__(rest_port)
 
-    def send_dispersal_request(self, data):
+    def da_disperse_data(self, data):
         data = alter_dispersal_data(data)
         response = self.rest_call("post", "disperse-data", json.dumps(data))
         return response
 
-    def send_get_range(self, query):
+    def da_get_range(self, query):
         query = alter_get_range_query(query)
         response = self.rest_call("post", "da/get-range", json.dumps(query))
         return response.json()

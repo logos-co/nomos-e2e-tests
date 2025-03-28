@@ -91,12 +91,12 @@ class ProxyClient:
 
     def send_dispersal_request(self, data, send_invalid=False):
         if send_invalid:
-            return self._invalid_api.send_dispersal_request(data)
+            return self._invalid_api.da_disperse_data(data)
 
-        return self._api.send_dispersal_request(data)
+        return self._api.da_disperse_data(data)
 
     def send_get_data_range_request(self, data, send_invalid=False):
         if send_invalid:
-            return self._invalid_api.send_get_range(data)
+            return self._invalid_api.da_get_range(data)
 
-        return self._api.send_get_range(data)
+        return self._api.da_get_range(data)
