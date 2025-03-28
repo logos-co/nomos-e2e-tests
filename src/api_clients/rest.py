@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from src.libs.custom_logger import get_custom_logger
 import json
 from src.api_clients.base_client import BaseClient
@@ -31,10 +33,40 @@ class REST(BaseClient):
         response = self.rest_call("get", "cryptarchia/info")
         return response.json()
 
+    def cryptarchia_headers(self, from_header_id, to_header_id):
+        response = self.rest_call("get", f"cryptarchia/headers?from={quote(from_header_id, safe='')}" f"&to={quote(to_header_id, safe='')}")
+        return response.json()
+
+    def da_add_share(self, data):
+        response = self.rest_call("post", "da/add-share", json.dumps(data))
+        return response
+
     def da_disperse_data(self, data):
         response = self.rest_call("post", "disperse-data", json.dumps(data))
         return response
 
     def da_get_range(self, query):
         response = self.rest_call("post", "da/get-range", json.dumps(query))
+        return response.json()
+
+    def da_get_commitments(self, query):
+        response = self.rest_call("get", "da/get-commitments", json.dumps(query))
+        return response.json()
+
+    def da_get_share(self, query):
+        response = self.rest_call("get", "da/get-share", json.dumps(query))
+        return response.json()
+
+    # DA_GET_SHARES: & str = "/da/sampling/shares"; Implemented ?
+
+    def da_block_peer(self, data):
+        response = self.rest_call("post", "da/block-peer", json.dumps(data))
+        return response
+
+    def da_unblock_peer(self, data):
+        response = self.rest_call("post", "da/unblock-peer", json.dumps(data))
+        return response
+
+    def da_blacklisted_peers(self):
+        response = self.rest_call("get", "da/blacklisted-peers")
         return response.json()
