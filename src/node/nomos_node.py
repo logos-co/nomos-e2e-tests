@@ -118,7 +118,7 @@ class NomosNode:
         return "nomos" in self._container_name
 
     def info(self):
-        return self._api.info()
+        return self._api.cryptarchia_info()
 
     def node_type(self):
         return self._node_type
@@ -153,7 +153,7 @@ class NomosNode:
             logger.debug("No keyword matches found in the logs.")
 
     def send_dispersal_request(self, data):
-        return self._api.send_dispersal_request(data)
+        return self._api.da_disperse_data(data)
 
     def send_get_data_range_request(self, data):
-        return self._api.send_get_range(data)
+        return self._api.da_get_range(data)
