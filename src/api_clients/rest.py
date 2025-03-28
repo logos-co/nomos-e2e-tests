@@ -57,8 +57,6 @@ class REST(BaseClient):
         response = self.rest_call("get", "da/get-share", json.dumps(query))
         return response.json()
 
-    # DA_GET_SHARES: & str = "/da/sampling/shares"; Implemented ?
-
     def da_block_peer(self, data):
         response = self.rest_call("post", "da/block-peer", json.dumps(data))
         return response
@@ -70,3 +68,19 @@ class REST(BaseClient):
     def da_blacklisted_peers(self):
         response = self.rest_call("get", "da/blacklisted-peers")
         return response.json()
+
+    def network_info(self):
+        response = self.rest_call("get", "network/info")
+        return response.json()
+
+    def storage_block(self, query):
+        response = self.rest_call("get", "storage/block", json.dumps(query))
+        return response.json()
+
+    def mempool_add_tx(self, data):
+        response = self.rest_call("post", "mempool/add/tx", json.dumps(data))
+        return response
+
+    def mempool_add_blobinfo(self, data):
+        response = self.rest_call("post", "mempool/add/blobinfo", json.dumps(data))
+        return response
