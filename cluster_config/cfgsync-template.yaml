@@ -11,8 +11,8 @@ subnetwork_size: {{ subnet_size }}
 dispersal_factor: {{ dispersal_factor }}
 num_samples: 1
 num_subnets: {{ subnet_size }}
-old_blobs_check_interval_secs: "5.0"
-blobs_validity_duration_secs: "60.0"
+old_blobs_check_interval: "5.0"
+blobs_validity_duration: "60.0"
 global_params_path: "/kzgrs_test_params"
 min_dispersal_peers: 1
 min_replication_peers: 1
