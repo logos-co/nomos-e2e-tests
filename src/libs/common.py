@@ -43,6 +43,12 @@ def to_app_id(n: int) -> list:
     return list(n.to_bytes(32, byteorder="big"))
 
 
+def to_blob_id(n: int) -> list:
+    if n < 0:
+        raise ValueError("Input must be an unsigned integer (non-negative)")
+    return list(n.to_bytes(32, byteorder="big"))
+
+
 def random_divide_k(n, k):
     if n < k:
         raise ValueError(f"n={n} must be at least k={k} to split into {k} parts")
