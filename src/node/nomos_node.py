@@ -160,3 +160,6 @@ class NomosNode:
 
     def send_get_commitments_request(self, data):
         return self._api.da_get_commitments(data)
+
+    def send_get_storage_block_request(self, data):
+        return self._api.storage_block(data)
