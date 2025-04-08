@@ -26,7 +26,7 @@ class StepsStorage(StepsCommon):
             try:
                 response = node.send_get_storage_block_request(query)
             except Exception as ex:
-                logger.error(f"Exception while retrieving commitments: {ex}")
+                logger.error(f"Exception while retrieving storage block: {ex}")
                 raise
 
             return response
