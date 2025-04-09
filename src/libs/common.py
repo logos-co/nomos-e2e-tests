@@ -43,8 +43,11 @@ def to_blob_id(n: int) -> list:
     return to_byte_list(n, 32)
 
 
-def to_header_id(n: int) -> list:
-    return to_byte_list(n, 32)
+def to_header_id(n: int):
+    if n < 0:
+        raise ValueError("Input must be an unsigned integer (non-negative)")
+
+    return n.to_bytes(32, byteorder="big").hex()
 
 
 def to_byte_list(n: int, l: int) -> list:
