@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 import allure
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -8,7 +10,7 @@ logger = get_custom_logger(__name__)
 
 
 def prepare_get_storage_block_request(header_id):
-    query_data = {"header_id": header_id}
+    query_data = f"{header_id}"
     return query_data
 
 

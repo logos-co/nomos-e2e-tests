@@ -75,7 +75,7 @@ class REST(BaseClient):
         return response.json()
 
     def storage_block(self, query):
-        response = self.rest_call("get", "storage/block", json.dumps(query))
+        response = self.rest_call("post", f"storage/block", json.dumps(query))
         return response.json()
 
     def mempool_add_tx(self, data):
