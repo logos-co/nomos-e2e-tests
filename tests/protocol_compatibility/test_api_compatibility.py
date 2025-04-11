@@ -51,10 +51,10 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         column_commitments, rows_commitments = extract_commitments(index_shares)
 
-        # Get headers of received blocks
+        # Get consensus headers
         headers = self.get_cryptarchia_headers(self.node2)
 
-        # Get storage blocks for headers
+        # Get storage blocks for received headers and extract blob ids
         blob_ids = []
         for header in headers:
             block = self.get_storage_block(self.node2, header)
@@ -67,6 +67,37 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
         commitments = []
         for blob_id in blob_ids:
             commitment = self.get_shares_commitments(self.node2, blob_id)
+            commitments.append(commitment)
+
+        rcv_column_commitments, rcv_rows_commitments = parse_commitments(commitments)
+
+        # Check commitments from shares match commitments received based on consensus data
+        assert all(c in rcv_column_commitments for c in column_commitments), "Not all aggregated column commitments are present"
+        assert all(r in rcv_rows_commitments for r in rows_commitments), "Not all rows commitments are present"
+
+    @pytest.mark.usefixtures("setup_4_node_cluster")
+    def test_da_consensus_compatibility_across_nodes(self):
+        self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(1), to_index(0))
+        delay(5)
+        index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
+        column_commitments, rows_commitments = extract_commitments(index_shares)
+
+        # Get consensus headers
+        headers = self.get_cryptarchia_headers(self.node3)
+
+        # Get storage blocks for received headers and extract blob ids
+        blob_ids = []
+        for header in headers:
+            block = self.get_storage_block(self.node3, header)
+            if block is not None and "bl_blobs" in block:
+                blobs = block["bl_blobs"]
+                for blob in blobs:
+                    blob_ids.append(blob["id"])
+
+        # Get commitments for blob ids
+        commitments = []
+        for blob_id in blob_ids:
+            commitment = self.get_shares_commitments(self.node3, blob_id)
             commitments.append(commitment)
 
         rcv_column_commitments, rcv_rows_commitments = parse_commitments(commitments)
