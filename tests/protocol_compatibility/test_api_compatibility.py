@@ -29,16 +29,15 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
                     a_c_c = share["aggregated_column_commitment"]
                     if a_c_c not in aggregated_column_commitments:
                         aggregated_column_commitments.append(a_c_c)
-                        logger.debug(f"a_c_c: {a_c_c}")
 
                     r_c = share["rows_commitments"]
-                    if r_c not in rows_commitments:
-                        rows_commitments.append(r_c)
-                        logger.debug(f"r_c: {rows_commitments}")
+                    for commitment in r_c:
+                        if commitment not in rows_commitments:
+                            rows_commitments.append(commitment)
 
         headers = self.get_cryptarchia_headers(self.node2)
-        logger.debug(f"headers: {headers}")
-        # get storage blocks for headerID
+
+        # Get storage blocks for headerIDs
         blob_ids = []
         for header in headers:
             block = self.get_storage_block(self.node2, header)
@@ -47,12 +46,11 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
                 for blob in blobs:
                     blob_ids.append(blob["id"])
 
-        logger.debug(f"blob ids: {blob_ids}")
+        # Get commitments for blob ids
         commitments = []
         for blob_id in blob_ids:
             commitment = self.get_shares_commitments(self.node2, blob_id)
             commitments.append(commitment)
-            logger.debug(f"commitments: {commitments}")
 
         rcv_aggregated_column_commitments = []
         rcv_rows_commitments = []
@@ -61,8 +59,9 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
             for rcv_rows_commitment in commitment["rows_commitments"]:
                 rcv_rows_commitments.append(rcv_rows_commitment)
 
-        # Check commitments from shares match commitments ceceived
+        # Check commitments from shares match commitments received based on consensus data
         for a_c_c in aggregated_column_commitments:
             assert a_c_c in rcv_aggregated_column_commitments
-        for r_c in rcv_rows_commitments:
+
+        for r_c in rows_commitments:
             assert r_c in rcv_rows_commitments
