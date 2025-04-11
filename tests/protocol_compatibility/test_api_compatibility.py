@@ -55,19 +55,16 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
         headers = self.get_cryptarchia_headers(self.node2)
 
         # Get storage blocks for received headers and extract blob ids
-        blob_ids = []
-        for header in headers:
-            block = self.get_storage_block(self.node2, header)
-            if block is not None and "bl_blobs" in block:
-                blobs = block["bl_blobs"]
-                for blob in blobs:
-                    blob_ids.append(blob["id"])
+        blob_ids = [
+            blob["id"]
+            for header in headers
+            for block in [self.get_storage_block(self.node2, header)]
+            if block is not None and "bl_blobs" in block
+            for blob in block["bl_blobs"]
+        ]
 
         # Get commitments for blob ids
-        commitments = []
-        for blob_id in blob_ids:
-            commitment = self.get_shares_commitments(self.node2, blob_id)
-            commitments.append(commitment)
+        commitments = [self.get_shares_commitments(self.node2, blob_id) for blob_id in blob_ids]
 
         rcv_column_commitments, rcv_rows_commitments = parse_commitments(commitments)
 
@@ -86,19 +83,16 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
         headers = self.get_cryptarchia_headers(self.node3)
 
         # Get storage blocks for received headers and extract blob ids
-        blob_ids = []
-        for header in headers:
-            block = self.get_storage_block(self.node3, header)
-            if block is not None and "bl_blobs" in block:
-                blobs = block["bl_blobs"]
-                for blob in blobs:
-                    blob_ids.append(blob["id"])
+        blob_ids = [
+            blob["id"]
+            for header in headers
+            for block in [self.get_storage_block(self.node3, header)]
+            if block is not None and "bl_blobs" in block
+            for blob in block["bl_blobs"]
+        ]
 
         # Get commitments for blob ids
-        commitments = []
-        for blob_id in blob_ids:
-            commitment = self.get_shares_commitments(self.node3, blob_id)
-            commitments.append(commitment)
+        commitments = [self.get_shares_commitments(self.node3, blob_id) for blob_id in blob_ids]
 
         rcv_column_commitments, rcv_rows_commitments = parse_commitments(commitments)
 
