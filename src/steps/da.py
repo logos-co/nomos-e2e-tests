@@ -28,6 +28,11 @@ def prepare_get_range_request(app_id, start_index, end_index):
     return query_data
 
 
+def prepare_get_shares_commitments_request(blob_id):
+    query_data = {"blob_id": blob_id}
+    return query_data
+
+
 def response_contains_data(response):
     if response is None:
         return False
@@ -101,3 +106,23 @@ class StepsDataAvailability(StepsCommon):
             return response
 
         return get_range()
+
+    @allure.step
+    def get_shares_commitments(self, node, blob_id, **kwargs):
+
+        timeout_duration = kwargs.get("timeout_duration", 65)
+        interval = kwargs.get("interval", 0.1)
+
+        query = prepare_get_shares_commitments_request(blob_id)
+
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
+        def get_commitments():
+            try:
+                response = node.send_get_commitments_request(query)
+            except Exception as ex:
+                logger.error(f"Exception while retrieving commitments: {ex}")
+                raise
+
+            return response
+
+        return get_commitments()

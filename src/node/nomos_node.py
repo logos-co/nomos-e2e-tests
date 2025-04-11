@@ -157,3 +157,12 @@ class NomosNode:
 
     def send_get_data_range_request(self, data):
         return self._api.da_get_range(data)
+
+    def send_get_commitments_request(self, data):
+        return self._api.da_get_commitments(data)
+
+    def send_get_storage_block_request(self, data):
+        return self._api.storage_block(data)
+
+    def send_get_cryptarchia_headers_request(self, data):
+        return self._api.cryptarchia_headers(data)

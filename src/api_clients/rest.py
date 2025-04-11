@@ -33,8 +33,9 @@ class REST(BaseClient):
         response = self.rest_call("get", "cryptarchia/info")
         return response.json()
 
-    def cryptarchia_headers(self, from_header_id, to_header_id):
-        response = self.rest_call("get", f"cryptarchia/headers?from={quote(from_header_id, safe='')}" f"&to={quote(to_header_id, safe='')}")
+    def cryptarchia_headers(self, query):
+        path = f"cryptarchia/headers{'?' + query if query else ''}"
+        response = self.rest_call("get", path)
         return response.json()
 
     def da_add_share(self, data):
@@ -74,7 +75,7 @@ class REST(BaseClient):
         return response.json()
 
     def storage_block(self, query):
-        response = self.rest_call("get", "storage/block", json.dumps(query))
+        response = self.rest_call("post", f"storage/block", json.dumps(query))
         return response.json()
 
     def mempool_add_tx(self, data):
