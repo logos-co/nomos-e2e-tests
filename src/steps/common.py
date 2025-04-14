@@ -14,7 +14,7 @@ from jinja2 import Template
 logger = get_custom_logger(__name__)
 
 
-def prepare_cluster_config(node_count, subnetwork_size=2, dispersal_factor=2):
+def prepare_cluster_config(node_count, subnetwork_size=2, dispersal_factor=2, min_dispersal_peers=1):
     cwd = os.getcwd()
     config_dir = "cluster_config"
 
@@ -22,7 +22,9 @@ def prepare_cluster_config(node_count, subnetwork_size=2, dispersal_factor=2):
         template_content = file.read()
     template = Template(template_content)
 
-    rendered = template.render(num_hosts=node_count, subnet_size=subnetwork_size, dispersal_factor=dispersal_factor)
+    rendered = template.render(
+        num_hosts=node_count, subnet_size=subnetwork_size, dispersal_factor=dispersal_factor, min_dispersal_peers=min_dispersal_peers
+    )
 
     with open(f"{cwd}/{config_dir}/cfgsync.yaml", "w") as outfile:
         outfile.write(rendered)
@@ -55,7 +57,8 @@ class StepsCommon:
 
         subnet_size = get_param_or_default(request, "subnet_size", 2)
         dispersal_factor = get_param_or_default(request, "dispersal_factor", 2)
-        prepare_cluster_config(2, subnet_size, dispersal_factor)
+        min_dispersal_peers = get_param_or_default(request, "min_dispersal_peers", 1)
+        prepare_cluster_config(2, subnet_size, dispersal_factor, min_dispersal_peers)
 
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")
@@ -76,8 +79,9 @@ class StepsCommon:
         logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
 
         subnet_size = get_param_or_default(request, "subnet_size", 4)
-        dispersal_factor = get_param_or_default(request, "dispersal_factor", 1)
-        prepare_cluster_config(4, subnet_size, dispersal_factor)
+        dispersal_factor = get_param_or_default(request, "dispersal_factor", 2)
+        min_dispersal_peers = get_param_or_default(request, "min_dispersal_peers", 4)
+        prepare_cluster_config(4, subnet_size, dispersal_factor, min_dispersal_peers)
 
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS, "nomos_node_0")

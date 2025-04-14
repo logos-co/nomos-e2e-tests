@@ -14,7 +14,7 @@ num_subnets: {{ subnet_size }}
 old_blobs_check_interval: "5.0"
 blobs_validity_duration: "60.0"
 global_params_path: "/kzgrs_test_params"
-min_dispersal_peers: 1
+min_dispersal_peers: {{ min_dispersal_peers }}
 min_replication_peers: 1
 monitor_failure_time_window: "5.0"
 balancer_interval: "5.0"
