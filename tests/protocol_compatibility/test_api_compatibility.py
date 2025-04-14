@@ -73,6 +73,7 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
         assert all(r in rcv_rows_commitments for r in rows_commitments), "Not all rows commitments are present"
 
     @pytest.mark.usefixtures("setup_4_node_cluster")
+    @pytest.mark.parametrize("setup_4_node_cluster", [{"subnet_size": 2}], indirect=True)
     def test_da_across_nodes_consensus_compatibility(self):
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(1), to_index(0))
         delay(5)
