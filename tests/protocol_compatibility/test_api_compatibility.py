@@ -75,7 +75,7 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
     @pytest.mark.usefixtures("setup_4_node_cluster")
     def test_da_cross_nodes_consensus_compatibility(self):
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(1), to_index(0))
-        delay(10)
+        delay(5)
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         column_commitments, rows_commitments = extract_commitments(index_shares)
 
