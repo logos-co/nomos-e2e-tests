@@ -32,15 +32,31 @@ def generate_log_prefix():
 
 
 def to_index(n: int) -> list:
-    if n < 0:
-        raise ValueError("Input must be an unsigned integer (non-negative)")
-    return list(n.to_bytes(8, byteorder="big"))
+    return to_byte_list(n, 8)
 
 
 def to_app_id(n: int) -> list:
+    return to_byte_list(n, 32)
+
+
+def to_blob_id(n: int) -> list:
+    return to_byte_list(n, 32)
+
+
+def to_header_id(n: int):
     if n < 0:
         raise ValueError("Input must be an unsigned integer (non-negative)")
-    return list(n.to_bytes(32, byteorder="big"))
+
+    return n.to_bytes(32, byteorder="big").hex()
+
+
+def to_byte_list(n: int, l: int) -> list:
+    if n < 0:
+        raise ValueError("Input must be an unsigned integer (non-negative)")
+    if l < 1:
+        raise ValueError("Length must be an unsigned integer greater than 0")
+
+    return list(n.to_bytes(l, byteorder="big"))
 
 
 def random_divide_k(n, k):

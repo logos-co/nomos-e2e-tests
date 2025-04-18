@@ -40,4 +40,5 @@ class BaseClient:
     def print_request_size(self, data):
         body_size = len(data) if data else 0
         body_kb = body_size / 1024
-        logger.debug(f"Request body size: {body_kb:.2f}kB")
+        if body_size > 0:
+            logger.debug(f"Request body size: {body_kb:.2f}kB")
