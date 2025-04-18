@@ -70,6 +70,14 @@ class REST(BaseClient):
         response = self.rest_call("get", "da/blacklisted-peers")
         return response.json()
 
+    def da_balancer_stats(self):
+        response = self.rest_call("get", "da/balancer-stats")
+        return response.json()
+
+    def da_monitor_stats(self):
+        response = self.rest_call("get", "da/monitor-stats")
+        return response.json()
+
     def network_info(self):
         response = self.rest_call("get", "network/info")
         return response.json()
