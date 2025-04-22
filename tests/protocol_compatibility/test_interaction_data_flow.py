@@ -26,3 +26,6 @@ class TestInteractionDataFlow(StepsDataAvailability, StepsConsensus, StepsStorag
         da_shares = extract_da_shares(index_shares)
 
         logger.debug(f"da_shares: {da_shares}")
+        logger.debug(f"{len(da_shares)} da_shares extracted")
+
+        self.add_publish_share(self.node2, da_shares[0])
