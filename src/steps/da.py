@@ -44,6 +44,31 @@ def response_contains_data(response):
     return False
 
 
+def transform_da_share_to_share(da_share):
+    share = {}
+    light_share = {
+        "share_idx": da_share["share_idx"],
+        "column": da_share["column"],
+        "column_commitment": da_share["column_commitment"],
+        "aggregated_column_proof": da_share["aggregated_column_proof"],
+        "rows_proofs": da_share["rows_proofs"],
+    }
+
+    shares_commitments = {
+        "aggregated_column_commitment": da_share["aggregated_column_commitment"],
+        "rows_commitments": da_share["rows_commitments"],
+    }
+
+    share["light_share"] = light_share
+    share["shares_commitments"] = shares_commitments
+
+    return share
+
+
+def prepare_add_share_request(da_share):
+    return transform_da_share_to_share(da_share)
+
+
 class StepsDataAvailability(StepsCommon):
     def find_executor_node(self):
         executor = {}
@@ -126,3 +151,23 @@ class StepsDataAvailability(StepsCommon):
             return response
 
         return get_commitments()
+
+    @allure.step
+    def add_publish_share(self, node, da_share, **kwargs):
+
+        timeout_duration = kwargs.get("timeout_duration", 65)
+        interval = kwargs.get("interval", 0.1)
+
+        data = prepare_add_share_request(da_share)
+
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
+        def add_share():
+            try:
+                response = node.send_add_share_request(data)
+            except Exception as ex:
+                logger.error(f"Exception while adding share: {ex}")
+                raise
+
+            return response
+
+        return add_share()

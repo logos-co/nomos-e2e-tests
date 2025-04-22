@@ -166,3 +166,6 @@ class NomosNode:
 
     def send_get_cryptarchia_headers_request(self, data):
         return self._api.cryptarchia_headers(data)
+
+    def send_add_share_request(self, data):
+        return self._api.da_add_share(data)
