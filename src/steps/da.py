@@ -44,29 +44,9 @@ def response_contains_data(response):
     return False
 
 
-def transform_da_share_to_share(da_share):
-    share = {}
-    light_share = {
-        "share_idx": da_share["share_idx"],
-        "column": da_share["column"],
-        "column_commitment": da_share["column_commitment"],
-        "aggregated_column_proof": da_share["aggregated_column_proof"],
-        "rows_proofs": da_share["rows_proofs"],
-    }
-
-    shares_commitments = {
-        "aggregated_column_commitment": da_share["aggregated_column_commitment"],
-        "rows_commitments": da_share["rows_commitments"],
-    }
-
-    share["light_share"] = light_share
-    share["shares_commitments"] = shares_commitments
-
-    return share
-
-
 def prepare_add_share_request(da_share):
-    return transform_da_share_to_share(da_share)
+    da_share["share_idx"] = 137
+    return da_share
 
 
 class StepsDataAvailability(StepsCommon):
