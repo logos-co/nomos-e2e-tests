@@ -25,7 +25,14 @@ class TestInteractionDataFlow(StepsDataAvailability, StepsConsensus, StepsStorag
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         da_shares = extract_da_shares(index_shares)
 
-        logger.debug(f"da_shares: {da_shares}")
-        logger.debug(f"{len(da_shares)} da_shares extracted")
+        modified_da_share = da_shares[0]
+        modified_da_share["share_idx"] = 7
 
-        self.add_publish_share(self.node2, da_shares[0])
+        self.add_publish_share(self.node2, modified_da_share)
+
+        index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(8))
+        da_shares = extract_da_shares(index_shares)
+
+        delay(5)
+
+        assert len(da_shares) < 3, "Modified da_share should not get published"

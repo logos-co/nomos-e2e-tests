@@ -44,11 +44,6 @@ def response_contains_data(response):
     return False
 
 
-def prepare_add_share_request(da_share):
-    da_share["share_idx"] = 137
-    return da_share
-
-
 class StepsDataAvailability(StepsCommon):
     def find_executor_node(self):
         executor = {}
@@ -138,12 +133,10 @@ class StepsDataAvailability(StepsCommon):
         timeout_duration = kwargs.get("timeout_duration", 65)
         interval = kwargs.get("interval", 0.1)
 
-        data = prepare_add_share_request(da_share)
-
         @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
         def add_share():
             try:
-                response = node.send_add_share_request(data)
+                response = node.send_add_share_request(da_share)
             except Exception as ex:
                 logger.error(f"Exception while adding share: {ex}")
                 raise
