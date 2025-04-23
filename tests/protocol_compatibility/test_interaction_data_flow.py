@@ -25,6 +25,8 @@ class TestInteractionDataFlow(StepsDataAvailability, StepsConsensus, StepsStorag
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         da_shares = extract_da_shares(index_shares)
 
+        assert len(da_shares) == 2, "Two da_shares are expected"
+
         modified_da_share = da_shares[0]
         modified_da_share["share_idx"] = 7
 
