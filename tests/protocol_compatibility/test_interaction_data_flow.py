@@ -50,4 +50,4 @@ class TestInteractionDataFlow(StepsDataAvailability, StepsMempool):
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         da_shares = extract_da_shares(index_shares)
 
-        assert len(da_shares) == 2, "Dispersal unaffected by additional blob info added to mempool"
+        assert len(da_shares) == 2, "Dispersal should not be affected by additional blob info added to mempool"
