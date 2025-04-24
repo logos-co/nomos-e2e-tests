@@ -1,5 +1,6 @@
 import pytest
 
+from src.env_vars import CONSENSUS_SLOT_TIME
 from src.libs.common import to_app_id, to_index, delay
 from src.libs.custom_logger import get_custom_logger
 from src.steps.consensus import StepsConsensus
@@ -47,7 +48,7 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_consensus_compatibility(self):
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(1), to_index(0))
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         column_commitments, rows_commitments = extract_commitments(index_shares)
 
@@ -75,7 +76,7 @@ class TestApiCompatibility(StepsDataAvailability, StepsConsensus, StepsStorage):
     @pytest.mark.usefixtures("setup_4_node_cluster")
     def test_da_cross_nodes_consensus_compatibility(self):
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(1), to_index(0))
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         index_shares = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         column_commitments, rows_commitments = extract_commitments(index_shares)
 

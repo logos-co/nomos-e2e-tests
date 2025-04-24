@@ -2,6 +2,7 @@ import json
 import pytest
 
 from src.client.nomos_cli import NomosCli
+from src.env_vars import CONSENSUS_SLOT_TIME
 from src.libs.common import delay, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability
@@ -16,7 +17,7 @@ class TestDataIntegrity(StepsDataAvailability):
     @pytest.mark.usefixtures("setup_4_node_cluster")
     def test_da_identify_retrieve_missing_columns(self):
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         test_results = []
         # Iterate through standard nodes 1-3 to get blob data for 1/2 columns
         for node in self.main_nodes[1:4]:
@@ -39,7 +40,7 @@ class TestDataIntegrity(StepsDataAvailability):
         self.main_nodes[1].stop()
 
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         test_results = []
         # Iterate through standard nodes 2-3 to get blob data for 1/2 columns
         for node in self.main_nodes[2:4]:
@@ -58,7 +59,7 @@ class TestDataIntegrity(StepsDataAvailability):
     @pytest.mark.usefixtures("setup_2_node_cluster")
     def test_da_sampling_determines_data_presence(self):
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         rcv_data_json = json.dumps(rcv_data)
 

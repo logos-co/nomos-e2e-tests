@@ -3,6 +3,7 @@ import time
 
 import pytest
 
+from src.env_vars import CONSENSUS_SLOT_TIME
 from src.libs.common import to_app_id, to_index, delay
 from src.steps.da import StepsDataAvailability, logger
 from src.test_data import DATA_TO_DISPERSE
@@ -44,7 +45,7 @@ class TestHighLoadDos(StepsDataAvailability):
         response = self.disperse_data(DATA_TO_DISPERSE[7], to_app_id(1), to_index(0))
         assert response.status_code == 200, "Initial dispersal was not successful"
 
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         start_time = time.time()
 
         while time.time() - start_time < timeout:
