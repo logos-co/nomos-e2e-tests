@@ -169,3 +169,6 @@ class NomosNode:
 
     def send_add_share_request(self, data):
         return self._api.da_add_share(data)
+
+    def send_add_blob_info_request(self, data):
+        return self._api.mempool_add_blobinfo(data)
