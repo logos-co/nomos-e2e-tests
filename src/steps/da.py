@@ -126,3 +126,21 @@ class StepsDataAvailability(StepsCommon):
             return response
 
         return get_commitments()
+
+    @allure.step
+    def add_publish_share(self, node, da_share, **kwargs):
+
+        timeout_duration = kwargs.get("timeout_duration", 65)
+        interval = kwargs.get("interval", 0.1)
+
+        @retry(stop=stop_after_delay(timeout_duration), wait=wait_fixed(interval), reraise=True)
+        def add_share():
+            try:
+                response = node.send_add_share_request(da_share)
+            except Exception as ex:
+                logger.error(f"Exception while adding share: {ex}")
+                raise
+
+            return response
+
+        return add_share()

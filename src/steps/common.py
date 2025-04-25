@@ -4,7 +4,7 @@ import os
 import pytest
 
 from src.client.proxy_client import ProxyClient
-from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR
+from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR, CONSENSUS_SLOT_TIME
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
@@ -72,7 +72,7 @@ class StepsCommon:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
 
     @pytest.fixture(scope="function")
     def setup_4_node_cluster(self, request):
@@ -97,7 +97,7 @@ class StepsCommon:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
 
     @pytest.fixture(scope="function")
     def setup_proxy_clients(self, request):

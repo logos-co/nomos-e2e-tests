@@ -1,5 +1,6 @@
 import pytest
 
+from src.env_vars import CONSENSUS_SLOT_TIME
 from src.libs.common import delay, generate_text_data, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.steps.da import StepsDataAvailability
@@ -29,7 +30,7 @@ class TestLargeVolume(StepsDataAvailability):
 
         assert response.status_code == 200
 
-        delay(5)
+        delay(CONSENSUS_SLOT_TIME)
         self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5), timeout_duration=20, interval=1)
 
     @pytest.mark.usefixtures("setup_2_node_cluster")
