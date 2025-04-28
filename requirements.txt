@@ -42,3 +42,4 @@ urllib3==2.2.2
 virtualenv==20.25.0
 Jinja2~=3.1.5
 psutil~=7.0.0
+pytest-shard==0.1.2
