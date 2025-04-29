@@ -158,9 +158,10 @@ class TestHighLoadDos(StepsDataAvailability):
                 response = self.disperse_data(
                     DATA_TO_DISPERSE[6], to_app_id(1), to_index(0), client_node=dispersal_cl, timeout_duration=0, send_invalid=invalid
                 )
-                assert response.status_code == 200, f"Dispersal failed with status code {response.status_code}"
+                assert response.status_code == 200, f"Dispersal failed with unexpected status code {response.status_code}"
                 successful_dispersals += 1
-            except AssertionError:
+            except Exception as ex:
+                assert "422" in str(ex), f"Unexpected error: {ex}"
                 if not invalid:
                     unsuccessful_dispersals += 1
 
