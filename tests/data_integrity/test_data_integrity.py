@@ -24,7 +24,7 @@ class TestDataIntegrity(StepsDataAvailability):
             rcv_data = self.get_data_range(node, to_app_id(1), to_index(0), to_index(5))
             rcv_data_json = json.dumps(rcv_data)
 
-            reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json])
+            reconstructed_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json], decode_only=True)
 
             if DATA_TO_DISPERSE[1] == reconstructed_data:
                 test_results.append(node.name())
