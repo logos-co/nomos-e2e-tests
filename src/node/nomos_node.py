@@ -128,6 +128,9 @@ class NomosNode:
     def name(self):
         return self._container_name
 
+    def get_archive(self, path):
+        return self._container.get_archive(path)
+
     def api_port(self):
         return self._tcp_port
 

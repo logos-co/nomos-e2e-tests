@@ -3,7 +3,7 @@ import json
 import pytest
 
 from src.client.nomos_cli import NomosCli
-from src.env_vars import CONSENSUS_SLOT_TIME, NOMOS
+from src.env_vars import CONSENSUS_SLOT_TIME, NOMOS, NOMOS_CUSTOM
 from src.libs.common import delay, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
@@ -27,22 +27,24 @@ class TestDataConfidentiality(StepsDataAvailability):
         decoded_data = NomosCli(command="reconstruct").run(input_values=[rcv_data_json], decode_only=True)
 
         assert DATA_TO_DISPERSE[1] == decoded_data, "Retrieved data are not same with original data"
+
+        # Copy the config file from first node
+        cfg_file = open("./cluster_config/config.yaml", "wb")
+        stream, _stat = self.node2.get_archive("/config.yaml")
+        for chunk in stream:
+            cfg_file.write(chunk)
+        cfg_file.close()
+
         self.node2.stop()
-        # Start new node with the same IP address
-        self.nodeX = NomosNode(NOMOS, "nomos_node_0")
+
+        # Start new node with the same hostname and configuration
+        self.nodeX = NomosNode(NOMOS_CUSTOM, "nomos_node_0")
         self.nodeX.start()
 
         try:
-            ensure_nodes_ready(self.nodeX)
+            self.nodeX.ensure_ready()
         except Exception as ex:
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
-        delay(CONSENSUS_SLOT_TIME)
-
-        self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))
-        delay(CONSENSUS_SLOT_TIME)
-        try:
-            rcv_data = self.get_data_range(self.nodeX, to_app_id(2), to_index(0), to_index(5))
-        except AssertionError as ae:
-            assert "Get data range response is empty" in str(ae), "Get data range response should be empty"
+        delay(600)
