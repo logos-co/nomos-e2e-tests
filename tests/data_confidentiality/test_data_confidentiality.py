@@ -46,7 +46,7 @@ class TestDataConfidentiality(StepsDataAvailability):
 
         self.node2.stop()
 
-        # Start new node with the same hostname and configuration
+        # Start new node with the same hostname and configuration as first node
         self.nodeX = NomosNode(NOMOS_CUSTOM, "nomos_node_0")
         self.nodeX.start()
 
@@ -56,13 +56,10 @@ class TestDataConfidentiality(StepsDataAvailability):
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
-        delay(600)
-
-        # delay(CONSENSUS_SLOT_TIME)
-        #
-        # self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))
-        # delay(CONSENSUS_SLOT_TIME)
-        # try:
-        #     rcv_data = self.get_data_range(self.nodeX, to_app_id(2), to_index(0), to_index(5))
-        # except AssertionError as ae:
-        #     assert "Get data range response is empty" in str(ae), "Get data range response should be empty"
+        # Confirm new node haven't received any dispersed data
+        self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))
+        delay(CONSENSUS_SLOT_TIME)
+        try:
+            _rcv_data = self.get_data_range(self.nodeX, to_app_id(2), to_index(0), to_index(5))
+        except AssertionError as ae:
+            assert "Get data range response is empty" in str(ae), "Get data range response should be empty"
