@@ -30,7 +30,7 @@ class NomosCli:
         self._volumes = nomos_cli[command]["volumes"]
         self._entrypoint = nomos_cli[command]["entrypoint"]
 
-        container_name = "nomos-cli-" + generate_log_prefix()
+        container_name = "nomos-cli_" + generate_log_prefix()
         self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
