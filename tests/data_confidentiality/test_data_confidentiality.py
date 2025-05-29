@@ -1,4 +1,6 @@
+import io
 import json
+import tarfile
 
 import pytest
 
@@ -29,11 +31,18 @@ class TestDataConfidentiality(StepsDataAvailability):
         assert DATA_TO_DISPERSE[1] == decoded_data, "Retrieved data are not same with original data"
 
         # Copy the config file from first node
-        cfg_file = open("./cluster_config/config.yaml", "wb")
         stream, _stat = self.node2.get_archive("/config.yaml")
-        for chunk in stream:
-            cfg_file.write(chunk)
-        cfg_file.close()
+
+        # Join stream into bytes and load into a memory buffer
+        tar_bytes = io.BytesIO(b"".join(stream))
+
+        # Extract and write only the actual text file
+        with tarfile.open(fileobj=tar_bytes) as tar:
+            member = tar.getmembers()[0]
+            file_obj = tar.extractfile(member)
+            if file_obj:
+                with open("./cluster_config/config.yaml", "wb") as f:
+                    f.write(file_obj.read())
 
         self.node2.stop()
 
@@ -48,3 +57,12 @@ class TestDataConfidentiality(StepsDataAvailability):
             raise
 
         delay(600)
+
+        # delay(CONSENSUS_SLOT_TIME)
+        #
+        # self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))
+        # delay(CONSENSUS_SLOT_TIME)
+        # try:
+        #     rcv_data = self.get_data_range(self.nodeX, to_app_id(2), to_index(0), to_index(5))
+        # except AssertionError as ae:
+        #     assert "Get data range response is empty" in str(ae), "Get data range response should be empty"

@@ -9,5 +9,4 @@ export CFG_FILE_PATH="/etc/nomos/config.yaml" \
        LOG_LEVEL="INFO" \
        RISC0_DEV_MODE=true
 
-/usr/bin/cfgsync-client && \
-    exec /usr/bin/nomos-node /etc/nomos/config.yaml
+exec /usr/bin/nomos-node /etc/nomos/config.yaml
