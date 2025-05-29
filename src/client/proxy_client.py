@@ -25,7 +25,7 @@ class ProxyClient:
         self._volumes = http_proxy[command]["volumes"]
         self._entrypoint = http_proxy[command]["entrypoint"]
 
-        container_name = "proxy-client-" + generate_log_prefix()
+        container_name = "proxy-client_" + generate_log_prefix()
         self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name

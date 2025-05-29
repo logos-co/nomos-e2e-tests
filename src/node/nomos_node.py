@@ -1,6 +1,7 @@
 import os
 
 from src.data_storage import DS
+from src.libs.common import generate_log_prefix
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -31,7 +32,8 @@ class NomosNode:
         self._entrypoint = nomos_nodes[node_type]["entrypoint"]
         self._node_type = node_type
 
-        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
+        log_prefix = generate_log_prefix()
+        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}_{log_prefix}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
