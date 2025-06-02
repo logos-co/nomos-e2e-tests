@@ -72,10 +72,9 @@ class TestDataConfidentiality(StepsDataAvailability):
 
         self.node2.stop()
 
-        # Change the private key of the nomos_node_0 -> change its PeerId
-        modify_key_value("./cluster_config/config.yaml", "network.backend.node_key")
-        modify_key_value("./cluster_config/config.yaml", "blend.backend.node_key")
-        modify_key_value("./cluster_config/config.yaml", "da_network.backend.node_key")
+        # Change the private key -> PeerId of the nomos_node_0. This would create a stranger to existing membership list.
+        for yaml_key_path in ["network.backend.node_key", "blend.backend.node_key", "da_network.backend.node_key"]:
+            modify_key_value("./cluster_config/config.yaml", yaml_key_path)
 
         # Start new node with the same hostname and configuration as first node
         self.nodeX = NomosNode(NOMOS_CUSTOM, "nomos_node_0")
@@ -87,7 +86,7 @@ class TestDataConfidentiality(StepsDataAvailability):
             logger.error(f"REST service did not become ready in time: {ex}")
             raise
 
-        # Confirm new node haven't received any dispersed data
+        # Confirm new node haven't received any dispersed data as it is not on membership list.
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))
         delay(CONSENSUS_SLOT_TIME)
         try:
