@@ -5,11 +5,10 @@ import tarfile
 import pytest
 
 from src.client.nomos_cli import NomosCli
-from src.env_vars import CONSENSUS_SLOT_TIME, NOMOS, NOMOS_CUSTOM
+from src.env_vars import CONSENSUS_SLOT_TIME, NOMOS_CUSTOM
 from src.libs.common import delay, to_app_id, to_index
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
-from src.steps.common import ensure_nodes_ready
 from src.steps.da import StepsDataAvailability
 from src.test_data import DATA_TO_DISPERSE
 
