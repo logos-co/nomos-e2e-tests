@@ -118,3 +118,7 @@ class StepsCommon:
             default_target = [f"http://{self.main_nodes[1 + i % 2].name()}:18080"]
             proxy_client.run(input_values=default_target)
             self.client_nodes.append(proxy_client)
+
+    @pytest.fixture(params=["setup_2_node_cluster", "setup_4_node_cluster"])
+    def setup_cluster_variant(self, request):
+        return request.getfixturevalue(request.param)

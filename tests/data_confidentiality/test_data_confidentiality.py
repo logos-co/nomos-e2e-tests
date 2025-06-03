@@ -45,7 +45,7 @@ def modify_key_value(file_path, yaml_key_path):
 class TestDataConfidentiality(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.usefixtures("setup_2_node_cluster")
+    @pytest.mark.usefixtures("setup_cluster_variant")
     def test_unauthorized_node_cannot_receive_dispersed_data(self):
         self.disperse_data(DATA_TO_DISPERSE[1], to_app_id(1), to_index(0))
         delay(CONSENSUS_SLOT_TIME)
