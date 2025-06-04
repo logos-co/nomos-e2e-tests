@@ -57,20 +57,7 @@ class TestDataConfidentiality(StepsDataAvailability):
 
         assert DATA_TO_DISPERSE[1] == decoded_data, "Retrieved data are not same with original data"
 
-        # Copy the config file from first node
-        stream, _stat = self.node2.get_archive("/config.yaml")
-
-        # Join stream into bytes and load into a memory buffer
-        tar_bytes = io.BytesIO(b"".join(stream))
-
-        # Extract and write only the actual text file
-        with tarfile.open(fileobj=tar_bytes) as tar:
-            member = tar.getmembers()[0]
-            file_obj = tar.extractfile(member)
-            if file_obj:
-                with open("./cluster_config/config.yaml", "wb") as f:
-                    f.write(file_obj.read())
-
+        self.node2.extract_config("./cluster_config/config.yaml")
         self.node2.stop()
 
         # Change the private key -> PeerId of the nomos_node_0. This would create a stranger to existing membership list.

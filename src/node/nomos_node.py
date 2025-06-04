@@ -1,4 +1,6 @@
+import io
 import os
+import tarfile
 
 from src.data_storage import DS
 from src.libs.common import generate_log_prefix
@@ -156,6 +158,21 @@ class NomosNode:
                     logger.debug(f"Log line matching keyword '{keyword}': {line}")
         else:
             logger.debug("No keyword matches found in the logs.")
+
+    def extract_config(self, target_file):
+        # Copy the config file from first node
+        stream, _stat = self.get_archive("/config.yaml")
+
+        # Join stream into bytes and load into a memory buffer
+        tar_bytes = io.BytesIO(b"".join(stream))
+
+        # Extract and write only the actual config file
+        with tarfile.open(fileobj=tar_bytes) as tar:
+            member = tar.getmembers()[0]
+            file_obj = tar.extractfile(member)
+            if file_obj:
+                with open(f"{target_file}", "wb") as f:
+                    f.write(file_obj.read())
 
     def send_dispersal_request(self, data):
         return self._api.da_disperse_data(data)
