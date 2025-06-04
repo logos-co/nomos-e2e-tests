@@ -67,12 +67,7 @@ class TestDataConfidentiality(StepsDataAvailability):
         # Start new node with the same hostname and configuration as first node
         self.nodeX = NomosNode(NOMOS_CUSTOM, "nomos_node_0")
         self.nodeX.start()
-
-        try:
-            self.nodeX.ensure_ready()
-        except Exception as ex:
-            logger.error(f"REST service did not become ready in time: {ex}")
-            raise
+        self.nodeX.ensure_ready()
 
         # Confirm new node haven't received any dispersed data as it is not on membership list.
         self.disperse_data(DATA_TO_DISPERSE[2], to_app_id(2), to_index(0))

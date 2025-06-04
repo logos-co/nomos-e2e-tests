@@ -116,7 +116,11 @@ class NomosNode:
             logger.info("REST service is ready !!")
 
         if self.is_nomos():
-            check_ready()
+            try:
+                check_ready()
+            except Exception as ex:
+                logger.error(f"REST service did not become ready in time: {ex}")
+                raise
 
     def is_nomos(self):
         return "nomos" in self._container_name

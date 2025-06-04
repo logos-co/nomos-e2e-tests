@@ -65,12 +65,7 @@ class StepsCommon:
         self.node3 = NomosNode(NOMOS_EXECUTOR, "nomos_node_1")
         self.main_nodes.extend([self.node1, self.node2, self.node3])
         start_nodes(self.main_nodes)
-
-        try:
-            ensure_nodes_ready(self.main_nodes[1:])
-        except Exception as ex:
-            logger.error(f"REST service did not become ready in time: {ex}")
-            raise
+        ensure_nodes_ready(self.main_nodes[1:])
 
         delay(CONSENSUS_SLOT_TIME)
 
@@ -90,12 +85,7 @@ class StepsCommon:
         self.node5 = NomosNode(NOMOS_EXECUTOR, "nomos_node_3")
         self.main_nodes.extend([self.node1, self.node2, self.node3, self.node4, self.node5])
         start_nodes(self.main_nodes)
-
-        try:
-            ensure_nodes_ready(self.main_nodes[1:])
-        except Exception as ex:
-            logger.error(f"REST service did not become ready in time: {ex}")
-            raise
+        ensure_nodes_ready(self.main_nodes[1:])
 
         delay(CONSENSUS_SLOT_TIME)
 
