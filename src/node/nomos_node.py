@@ -1,6 +1,9 @@
+import io
 import os
+import tarfile
 
 from src.data_storage import DS
+from src.libs.common import generate_log_prefix
 from src.libs.custom_logger import get_custom_logger
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -31,7 +34,8 @@ class NomosNode:
         self._entrypoint = nomos_nodes[node_type]["entrypoint"]
         self._node_type = node_type
 
-        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}__{self._image_name.replace('/', '_')}.log")
+        log_prefix = generate_log_prefix()
+        self._log_path = os.path.join(DOCKER_LOG_DIR, f"{container_name}_{log_prefix}__{self._image_name.replace('/', '_')}.log")
         self._docker_manager = DockerManager(self._image_name)
         self._container_name = container_name
         self._container = None
@@ -112,7 +116,11 @@ class NomosNode:
             logger.info("REST service is ready !!")
 
         if self.is_nomos():
-            check_ready()
+            try:
+                check_ready()
+            except Exception as ex:
+                logger.error(f"REST service did not become ready in time: {ex}")
+                raise
 
     def is_nomos(self):
         return "nomos" in self._container_name
@@ -125,6 +133,9 @@ class NomosNode:
 
     def name(self):
         return self._container_name
+
+    def get_archive(self, path):
+        return self._container.get_archive(path)
 
     def api_port(self):
         return self._tcp_port
@@ -151,6 +162,21 @@ class NomosNode:
                     logger.debug(f"Log line matching keyword '{keyword}': {line}")
         else:
             logger.debug("No keyword matches found in the logs.")
+
+    def extract_config(self, target_file):
+        # Copy the config file from first node
+        stream, _stat = self.get_archive("/config.yaml")
+
+        # Join stream into bytes and load into a memory buffer
+        tar_bytes = io.BytesIO(b"".join(stream))
+
+        # Extract and write only the actual config file
+        with tarfile.open(fileobj=tar_bytes) as tar:
+            member = tar.getmembers()[0]
+            file_obj = tar.extractfile(member)
+            if file_obj:
+                with open(f"{target_file}", "wb") as f:
+                    f.write(file_obj.read())
 
     def send_dispersal_request(self, data):
         return self._api.da_disperse_data(data)

@@ -21,6 +21,7 @@ NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
 DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
 HTTP_PROXY_IMAGE = get_env_var("HTTP_PROXY_IMAGE", DEFAULT_PROXY_IMAGE)
 
+NOMOS_CUSTOM = "nomos_custom"
 NOMOS = "nomos"
 NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
