@@ -4,7 +4,7 @@ import os
 import pytest
 
 from src.client.proxy_client import ProxyClient
-from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR, CONSENSUS_SLOT_TIME
+from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR, CONSENSUS_SLOT_TIME, NOMOS_MOD_DA, NOMOS_EXECUTOR_MOD_DA
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
@@ -112,3 +112,21 @@ class StepsCommon:
     @pytest.fixture(params=["setup_2_node_cluster", "setup_4_node_cluster"])
     def setup_cluster_variant(self, request):
         return request.getfixturevalue(request.param)
+
+    @pytest.fixture(scope="function")
+    def setup_2_node_mod_da_cluster(self, request):
+        logger.debug(f"Running fixture setup: {inspect.currentframe().f_code.co_name}")
+
+        subnet_size = get_param_or_default(request, "subnet_size", 2)
+        dispersal_factor = get_param_or_default(request, "dispersal_factor", 2)
+        min_dispersal_peers = get_param_or_default(request, "min_dispersal_peers", 1)
+        prepare_cluster_config(2, subnet_size, dispersal_factor, min_dispersal_peers)
+
+        self.node1 = NomosNode(CFGSYNC, "cfgsync")
+        self.node2 = NomosNode(NOMOS_MOD_DA, "nomos_node_0")
+        self.node3 = NomosNode(NOMOS_EXECUTOR_MOD_DA, "nomos_node_1")
+        self.main_nodes.extend([self.node1, self.node2, self.node3])
+        start_nodes(self.main_nodes)
+        ensure_nodes_ready(self.main_nodes[1:])
+
+        delay(CONSENSUS_SLOT_TIME)
