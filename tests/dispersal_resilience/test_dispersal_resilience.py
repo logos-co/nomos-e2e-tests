@@ -16,6 +16,10 @@ class TestDispersalResilience(StepsDataAvailability):
         self.disperse_data(DATA_TO_DISPERSE[3], to_app_id(1), to_index(0))
         delay(CONSENSUS_SLOT_TIME)
         try:
-            _rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
+            rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         except AssertionError as ae:
             assert "Get data range response is empty" in str(ae), "Get data range response should be empty"
+            return
+
+        if rcv_data:
+            raise AssertionError("Get data range response should be empty")
