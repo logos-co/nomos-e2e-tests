@@ -5,13 +5,13 @@ nomos_nodes = {
         "image": NOMOS_MOD_DA_IMAGE,
         "volumes": ["cluster_config:/etc/nomos", "./kzgrs/kzgrs_test_params:/kzgrs_test_params:z"],
         "ports": ["3000/udp", "18080/tcp"],
-        "entrypoint": "/etc/nomos/scripts/run_nomos_node.sh",
+        "entrypoint": "/etc/nomos/scripts/run_nomos_node_debug.sh",
     },
     "nomos_executor_mod_da": {
         "image": NOMOS_EXECUTOR_MOD_DA_IMAGE,
         "volumes": ["cluster_config:/etc/nomos", "./kzgrs/kzgrs_test_params:/kzgrs_test_params:z"],
         "ports": ["3000/udp", "18080/tcp"],
-        "entrypoint": "/etc/nomos/scripts/run_nomos_executor.sh",
+        "entrypoint": "/etc/nomos/scripts/run_nomos_executor_debug.sh",
     },
     "nomos_custom": {
         "image": NOMOS_IMAGE,
