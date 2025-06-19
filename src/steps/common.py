@@ -122,9 +122,12 @@ class StepsCommon:
         min_dispersal_peers = get_param_or_default(request, "min_dispersal_peers", 1)
         prepare_cluster_config(2, subnet_size, dispersal_factor, min_dispersal_peers)
 
+        executor_version = get_param_or_default(request, "executor_version", "")
+        executor_version = f"_{executor_version}" if executor_version else ""
+
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
         self.node2 = NomosNode(NOMOS_MOD_DA, "nomos_node_0")
-        self.node3 = NomosNode(NOMOS_EXECUTOR_MOD_DA, "nomos_node_1")
+        self.node3 = NomosNode(NOMOS_EXECUTOR_MOD_DA + f"{executor_version}", "nomos_node_1")
         self.main_nodes.extend([self.node1, self.node2, self.node3])
         start_nodes(self.main_nodes)
         ensure_nodes_ready(self.main_nodes[1:])

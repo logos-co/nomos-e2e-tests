@@ -23,3 +23,15 @@ class TestDispersalResilience(StepsDataAvailability):
 
         if rcv_data:
             raise AssertionError("Get data range response should be empty")
+
+    @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
+    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"executor_version": "25d781e"}], indirect=True)
+    def test_chunkification_robustness_chunk_size_30_executor(self):
+        # Confirm validator node has rejected dispersal request from executor with different data alignment
+        try:
+            self.disperse_data(DATA_TO_DISPERSE[4], to_app_id(1), to_index(0), timeout_duration=0)
+        except Exception as e:
+            assert "does not match destination slice length" in str(e), "Send dispersal request should fail"
+            return
+
+        assert False, "Send dispersal request should fail"
