@@ -31,10 +31,10 @@ class TestDispersalResilience(StepsDataAvailability):
         try:
             self.disperse_data(DATA_TO_DISPERSE[4], to_app_id(1), to_index(0), timeout_duration=0)
         except Exception as e:
-            assert "does not match destination slice length" in str(e), "Send dispersal request should fail"
+            assert "does not match destination slice length" in str(e), "Send dispersal request with different data alignment should fail"
             return
 
-        assert False, "Send dispersal request should fail"
+        assert False, "Send dispersal request with different data alignment should fail"
 
     @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"executor_version": "0a01ddb"}], indirect=True)
@@ -43,7 +43,7 @@ class TestDispersalResilience(StepsDataAvailability):
         try:
             self.disperse_data(DATA_TO_DISPERSE[5], to_app_id(1), to_index(0), timeout_duration=0)
         except Exception as e:
-            assert "does not match destination slice length" in str(e), "Send dispersal request should fail"
+            assert "blob sampling timed out for" in str(e), "Send dispersal request with inconsistent RS encoding should fail"
             return
 
         assert False, "Send dispersal request with inconsistent RS encoding should fail"
