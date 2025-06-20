@@ -48,7 +48,7 @@ class StepsDataAvailability(StepsCommon):
     def find_executor_node(self):
         executor = {}
         for node in self.main_nodes:
-            if node.node_type() == NOMOS_EXECUTOR:
+            if "nomos_executor" in node.node_type():
                 executor = node
         return executor
 
