@@ -6,6 +6,7 @@ from src.steps.da import StepsDataAvailability
 from src.test_data import DATA_TO_DISPERSE
 
 
+@pytest.mark.mod_da_node
 class TestDispersalResilience(StepsDataAvailability):
     main_nodes = []
 

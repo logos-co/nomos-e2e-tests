@@ -17,6 +17,21 @@ from src.data_storage import DS
 logger = get_custom_logger(__name__)
 
 
+def pytest_addoption(parser):
+    parser.addoption("--run-with-mod-da-node", action="store_true", default=False, help="Run tests requiring nodes with modified da layer")
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "mod_da_node: Mark test as requiring --run-with-mod-da-node")
+
+
+def pytest_collection_modifyitems(config, items):
+    run_mod_da_node = config.getoption("--run-with-mod-da-node")
+    for item in items:
+        if "mod_da_node" in item.keywords and not run_mod_da_node:
+            item.add_marker(pytest.mark.skip(reason="Requires --run-with-mod-da-node option"))
+
+
 # See https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item):
