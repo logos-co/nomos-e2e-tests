@@ -26,7 +26,7 @@ class TestDispersalResilience(StepsDataAvailability):
 
     @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"executor_version": "25d781e"}], indirect=True)
-    def test_chunkification_robustness_chunk_size_30_executor(self):
+    def test_chunkification_robustness_different_chunk_size(self):
         # Confirm validator node has rejected dispersal request from executor with different data alignment
         try:
             self.disperse_data(DATA_TO_DISPERSE[4], to_app_id(1), to_index(0), timeout_duration=0)
