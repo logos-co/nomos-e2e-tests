@@ -38,7 +38,7 @@ class TestDispersalResilience(StepsDataAvailability):
         assert False, "Send dispersal request with different data alignment should fail"
 
     @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
-    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"executor_version": "0a01ddb"}], indirect=True)
+    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "4a58376"}], indirect=True)
     def test_rs_encoding_resistance_to_manipulation(self):
         # Confirm validator node has rejected dispersal request from executor with inconsistent RS encoding
         try:

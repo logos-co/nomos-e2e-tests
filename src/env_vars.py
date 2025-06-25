@@ -20,7 +20,7 @@ NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
 NOMOS_MOD_DA_IMAGE_d8bbc46 = "nomos-mod-da-d8bbc46:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE = "nomos-executor-mod-da:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114 = "nomos-executor-mod-da-7f54114:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE_0a01ddb = "nomos-executor-mod-da-0a01ddb:testnet"
+NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376 = "nomos-executor-mod-da-4a58376:testnet"
 
 DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
 HTTP_PROXY_IMAGE = get_env_var("HTTP_PROXY_IMAGE", DEFAULT_PROXY_IMAGE)
@@ -32,7 +32,7 @@ CFGSYNC = "cfgsync"
 NOMOS_MOD_DA = "nomos_mod_da"
 NOMOS_EXECUTOR_MOD_DA = "nomos_executor_mod_da"
 NOMOS_EXECUTOR_MOD_DA_7f54114 = "nomos_executor_mod_da_7f54114"
-NOMOS_EXECUTOR_MOD_DA_0a01ddb = "nomos_executor_mod_da_0a01ddb"
+NOMOS_EXECUTOR_MOD_DA_4a58376 = "nomos_executor_mod_da_4a58376"
 
 NODE_1 = get_env_var("NODE_1", NOMOS)
 NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)
