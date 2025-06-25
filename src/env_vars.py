@@ -14,13 +14,24 @@ def get_env_var(var_name, default=None):
     return env_var
 
 
+def make_mod_da_var(node_type, version, is_image=False):
+    base = "nomos_executor_mod_da" if node_type == "executor" else "nomos_mod_da"
+    value = f"{base}_{version}"
+
+    if is_image:
+        return value.replace("_", "-") + ":testnet"
+    else:
+        return value
+
+
 # Configuration constants. Need to be upercase to appear in reports
 DEFAULT_NOMOS_IMAGE = "nomos:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
-NOMOS_MOD_DA_IMAGE_d8bbc46 = "nomos-mod-da-d8bbc46:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE_d19a1f3 = "nomos-executor-mod-da-d19a1f3:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114 = "nomos-executor-mod-da-7f54114:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376 = "nomos-executor-mod-da-4a58376:testnet"
+
+NOMOS_MOD_DA_IMAGE_d8bbc46 = make_mod_da_var("validator", "d8bbc46", True)
+NOMOS_EXECUTOR_MOD_DA_IMAGE_d19a1f3 = make_mod_da_var("executor", "d19a1f3", True)
+NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114 = make_mod_da_var("executor", "7f54114", True)
+NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376 = make_mod_da_var("executor", "4a58376", True)
 
 DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
 HTTP_PROXY_IMAGE = get_env_var("HTTP_PROXY_IMAGE", DEFAULT_PROXY_IMAGE)
@@ -29,11 +40,10 @@ NOMOS_CUSTOM = "nomos_custom"
 NOMOS = "nomos"
 NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
-NOMOS_MOD_DA = "nomos_mod_da"
-NOMOS_EXECUTOR_MOD_DA = "nomos_executor_mod_da"
-NOMOS_EXECUTOR_MOD_DA_d19a1f3 = "nomos_executor_mod_da_d19a1f3"
-NOMOS_EXECUTOR_MOD_DA_7f54114 = "nomos_executor_mod_da_7f54114"
-NOMOS_EXECUTOR_MOD_DA_4a58376 = "nomos_executor_mod_da_4a58376"
+
+NOMOS_EXECUTOR_MOD_DA_d19a1f3 = make_mod_da_var("executor", "d19a1f3")
+NOMOS_EXECUTOR_MOD_DA_7f54114 = make_mod_da_var("executor", "7f54114")
+NOMOS_EXECUTOR_MOD_DA_4a58376 = make_mod_da_var("executor", "4a58376")
 
 NODE_1 = get_env_var("NODE_1", NOMOS)
 NODE_2 = get_env_var("NODE_2", NOMOS_EXECUTOR)

@@ -4,7 +4,7 @@ import os
 import pytest
 
 from src.client.proxy_client import ProxyClient
-from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR, CONSENSUS_SLOT_TIME, NOMOS_MOD_DA, NOMOS_EXECUTOR_MOD_DA
+from src.env_vars import CFGSYNC, NOMOS, NOMOS_EXECUTOR, CONSENSUS_SLOT_TIME, make_mod_da_var
 from src.libs.common import delay
 from src.libs.custom_logger import get_custom_logger
 from src.node.nomos_node import NomosNode
@@ -123,14 +123,14 @@ class StepsCommon:
         prepare_cluster_config(2, subnet_size, dispersal_factor, min_dispersal_peers)
 
         validator_version = get_param_or_default(request, "validator_version", "")
-        validator_version = f"_{validator_version}" if validator_version else ""
+        validator = make_mod_da_var("validator", validator_version)
 
         executor_version = get_param_or_default(request, "executor_version", "")
-        executor_version = f"_{executor_version}" if executor_version else ""
+        executor = make_mod_da_var("executor", executor_version)
 
         self.node1 = NomosNode(CFGSYNC, "cfgsync")
-        self.node2 = NomosNode(NOMOS_MOD_DA + f"{validator_version}", "nomos_node_0")
-        self.node3 = NomosNode(NOMOS_EXECUTOR_MOD_DA + f"{executor_version}", "nomos_node_1")
+        self.node2 = NomosNode(validator, "nomos_node_0")
+        self.node3 = NomosNode(executor, "nomos_node_1")
         self.main_nodes.extend([self.node1, self.node2, self.node3])
         start_nodes(self.main_nodes)
         ensure_nodes_ready(self.main_nodes[1:])
