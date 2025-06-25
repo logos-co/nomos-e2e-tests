@@ -25,7 +25,7 @@ def make_mod_da_var(node_type, version, is_image=False):
 
 
 # Configuration constants. Need to be upercase to appear in reports
-DEFAULT_NOMOS_IMAGE = "nomos:testnet"
+DEFAULT_NOMOS_IMAGE = "ghcr.io/logos-co/nomos:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
 
 NOMOS_MOD_DA_IMAGE_d8bbc46 = make_mod_da_var("validator", "d8bbc46", True)
