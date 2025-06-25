@@ -21,7 +21,6 @@ class TestDispersalResilience(StepsDataAvailability):
             rcv_data = self.get_data_range(self.node2, to_app_id(1), to_index(0), to_index(5))
         except AssertionError as ae:
             assert "Get data range response is empty" in str(ae), "Get data range response should be empty"
-            return
 
         if rcv_data:
             raise AssertionError("Get data range response should be empty")
@@ -35,7 +34,7 @@ class TestDispersalResilience(StepsDataAvailability):
             assert "does not match destination slice length" in str(e), "Send dispersal request with different data alignment should fail"
             return
 
-        assert False, "Send dispersal request with different data alignment should fail"
+        raise AssertionError("Send dispersal request with different data alignment should fail")
 
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "4a58376"}], indirect=True)
     def test_rs_encoding_resistance_to_manipulation(self):
@@ -46,4 +45,4 @@ class TestDispersalResilience(StepsDataAvailability):
             assert "blob sampling timed out for" in str(e), "Send dispersal request with inconsistent RS encoding should fail"
             return
 
-        assert False, "Send dispersal request with inconsistent RS encoding should fail"
+        raise AssertionError("Send dispersal request with inconsistent RS encoding should fail")
