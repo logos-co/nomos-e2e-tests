@@ -26,7 +26,7 @@ class TestDispersalResilience(StepsDataAvailability):
             raise AssertionError("Get data range response should be empty")
 
     @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
-    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"executor_version": "25d781e"}], indirect=True)
+    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "7f54114"}], indirect=True)
     def test_chunkification_robustness_different_chunk_size(self):
         # Confirm validator node has rejected dispersal request from executor with different data alignment
         try:

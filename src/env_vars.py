@@ -17,9 +17,9 @@ def get_env_var(var_name, default=None):
 # Configuration constants. Need to be upercase to appear in reports
 DEFAULT_NOMOS_IMAGE = "nomos:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
-NOMOS_MOD_DA_IMAGE = "nomos-mod-da:testnet"
+NOMOS_MOD_DA_IMAGE_d8bbc46 = "nomos-mod-da-d8bbc46:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE = "nomos-executor-mod-da:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE_25d781e = "nomos-executor-mod-da-25d781e:testnet"
+NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114 = "nomos-executor-mod-da-7f54114:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE_0a01ddb = "nomos-executor-mod-da-0a01ddb:testnet"
 
 DEFAULT_PROXY_IMAGE = "bitnami/configurable-http-proxy:latest"
@@ -31,7 +31,7 @@ NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
 NOMOS_MOD_DA = "nomos_mod_da"
 NOMOS_EXECUTOR_MOD_DA = "nomos_executor_mod_da"
-NOMOS_EXECUTOR_MOD_DA_25d781e = "nomos_executor_mod_da_25d781e"
+NOMOS_EXECUTOR_MOD_DA_7f54114 = "nomos_executor_mod_da_7f54114"
 NOMOS_EXECUTOR_MOD_DA_0a01ddb = "nomos_executor_mod_da_0a01ddb"
 
 NODE_1 = get_env_var("NODE_1", NOMOS)
