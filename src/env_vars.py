@@ -18,7 +18,7 @@ def get_env_var(var_name, default=None):
 DEFAULT_NOMOS_IMAGE = "nomos:testnet"
 NOMOS_IMAGE = get_env_var("NOMOS_IMAGE", DEFAULT_NOMOS_IMAGE)
 NOMOS_MOD_DA_IMAGE_d8bbc46 = "nomos-mod-da-d8bbc46:testnet"
-NOMOS_EXECUTOR_MOD_DA_IMAGE = "nomos-executor-mod-da:testnet"
+NOMOS_EXECUTOR_MOD_DA_IMAGE_d19a1f3 = "nomos-executor-mod-da-d19a1f3:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114 = "nomos-executor-mod-da-7f54114:testnet"
 NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376 = "nomos-executor-mod-da-4a58376:testnet"
 
@@ -31,6 +31,7 @@ NOMOS_EXECUTOR = "nomos_executor"
 CFGSYNC = "cfgsync"
 NOMOS_MOD_DA = "nomos_mod_da"
 NOMOS_EXECUTOR_MOD_DA = "nomos_executor_mod_da"
+NOMOS_EXECUTOR_MOD_DA_d19a1f3 = "nomos_executor_mod_da_d19a1f3"
 NOMOS_EXECUTOR_MOD_DA_7f54114 = "nomos_executor_mod_da_7f54114"
 NOMOS_EXECUTOR_MOD_DA_4a58376 = "nomos_executor_mod_da_4a58376"
 

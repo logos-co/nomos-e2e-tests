@@ -1,9 +1,9 @@
 from src.env_vars import (
     NOMOS_IMAGE,
-    NOMOS_EXECUTOR_MOD_DA_IMAGE,
-    NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376,
     NOMOS_MOD_DA_IMAGE_d8bbc46,
+    NOMOS_EXECUTOR_MOD_DA_IMAGE_d19a1f3,
     NOMOS_EXECUTOR_MOD_DA_IMAGE_7f54114,
+    NOMOS_EXECUTOR_MOD_DA_IMAGE_4a58376,
 )
 
 nomos_nodes = {
@@ -13,8 +13,8 @@ nomos_nodes = {
         "ports": ["3000/udp", "18080/tcp"],
         "entrypoint": "/etc/nomos/scripts/run_nomos_node_debug.sh",
     },
-    "nomos_executor_mod_da": {
-        "image": NOMOS_EXECUTOR_MOD_DA_IMAGE,
+    "nomos_executor_mod_da_d19a1f3": {
+        "image": NOMOS_EXECUTOR_MOD_DA_IMAGE_d19a1f3,
         "volumes": ["cluster_config:/etc/nomos", "./kzgrs/kzgrs_test_params:/kzgrs_test_params:z"],
         "ports": ["3000/udp", "18080/tcp"],
         "entrypoint": "/etc/nomos/scripts/run_nomos_executor_debug.sh",

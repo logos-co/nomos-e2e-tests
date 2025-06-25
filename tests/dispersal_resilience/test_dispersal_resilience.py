@@ -11,6 +11,7 @@ class TestDispersalResilience(StepsDataAvailability):
     main_nodes = []
 
     @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
+    @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "d19a1f3"}], indirect=True)
     def test_integrity_kzg_commitments(self):
         # Confirm validator node has rejected dispersal request from executor - there is a mismatch between
         # column data and proofs.
