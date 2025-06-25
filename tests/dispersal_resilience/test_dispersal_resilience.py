@@ -6,11 +6,11 @@ from src.steps.da import StepsDataAvailability
 from src.test_data import DATA_TO_DISPERSE
 
 
+@pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
 @pytest.mark.mod_da_node
 class TestDispersalResilience(StepsDataAvailability):
     main_nodes = []
 
-    @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "d19a1f3"}], indirect=True)
     def test_integrity_kzg_commitments(self):
         # Confirm validator node has rejected dispersal request from executor - there is a mismatch between
@@ -26,7 +26,6 @@ class TestDispersalResilience(StepsDataAvailability):
         if rcv_data:
             raise AssertionError("Get data range response should be empty")
 
-    @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "7f54114"}], indirect=True)
     def test_chunkification_robustness_different_chunk_size(self):
         # Confirm validator node has rejected dispersal request from executor with different data alignment
@@ -38,7 +37,6 @@ class TestDispersalResilience(StepsDataAvailability):
 
         assert False, "Send dispersal request with different data alignment should fail"
 
-    @pytest.mark.usefixtures("setup_2_node_mod_da_cluster")
     @pytest.mark.parametrize("setup_2_node_mod_da_cluster", [{"validator_version": "d8bbc46", "executor_version": "4a58376"}], indirect=True)
     def test_rs_encoding_resistance_to_manipulation(self):
         # Confirm validator node has rejected dispersal request from executor with inconsistent RS encoding
