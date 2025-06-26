@@ -12,6 +12,7 @@ from src.docker_manager import DockerManager, stop, kill
 from src.env_vars import DOCKER_LOG_DIR
 from src.node.node_vars import nomos_nodes
 from src.test_data import LOG_ERROR_KEYWORDS
+from src.tfidf.tfidf import LogTfidf
 
 logger = get_custom_logger(__name__)
 
@@ -146,22 +147,12 @@ class NomosNode:
                 return internal_port.replace("/tcp", "")
         return None
 
-    def check_nomos_log_errors(self, whitelist=None):
+    def check_nomos_log_errors(self):
         keywords = LOG_ERROR_KEYWORDS
 
-        # If a whitelist is provided, remove those keywords from the keywords list
-        if whitelist:
-            keywords = [keyword for keyword in keywords if keyword not in whitelist]
-
-        matches_found = self._docker_manager.search_log_for_keywords(self._log_path, keywords, False)
-
-        logger.info(f"Printing log matches for {self.name()}")
-        if matches_found:
-            for keyword, log_lines in matches_found.items():
-                for line in log_lines:
-                    logger.debug(f"Log line matching keyword '{keyword}': {line}")
-        else:
-            logger.debug("No keyword matches found in the logs.")
+        logger.debug(f"Parsing log for node {self.name()}")
+        log_tfidf = LogTfidf()
+        log_tfidf.parse_log(self._log_path, f"{self._log_path}.parsed", keywords, True)
 
     def extract_config(self, target_file):
         # Copy the config file from first node
