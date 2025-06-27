@@ -152,7 +152,7 @@ class NomosNode:
 
         logger.debug(f"Parsing log for node {self.name()}")
         log_tfidf = LogTfidf()
-        log_tfidf.parse_log(self._log_path, f"{self._log_path}.parsed", keywords, True)
+        log_tfidf.parse_log(self._log_path, keywords, None)
 
     def extract_config(self, target_file):
         # Copy the config file from first node

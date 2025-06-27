@@ -15,6 +15,16 @@ def normalize_log_message(text):
     return " ".join(text.split())
 
 
+def write_output(df, output_file=None):
+    lines = df["d1"].astype(str) + "\n"
+
+    if output_file:
+        with open(output_file, "w") as out_file:
+            out_file.writelines(lines)
+
+    print("".join(lines), end="")
+
+
 class LogTfidf:
     def __init__(self):
         self.stemmer = PorterStemmer()
@@ -33,7 +43,7 @@ class LogTfidf:
         tokens = word_tokenize(text.lower())
         return self.get_stemmed_tokens(tokens)
 
-    def parse_log(self, input_file, output_file, keywords, print_to_stdout=True):
+    def parse_log(self, input_file, keywords, output_file=None):
         vectorizer = ext.CountVectorizer(tokenizer=self.get_tokens, stop_words=self.stop_words, token_pattern=None)
         with open(input_file, "r") as file:
             lines = [line.rstrip() for line in file]
@@ -63,10 +73,4 @@ class LogTfidf:
         df = df.drop_duplicates(subset="d1_normalized", keep="first")
         df = df.drop(columns="d1_normalized")
 
-        with open(output_file, "w") as out_file:
-            for index, row in df.iterrows():
-                line = "{0}\n"
-                line = line.format(row["d1"])
-                out_file.write(line)
-                if print_to_stdout:
-                    print(line)
+        write_output(df, output_file)
