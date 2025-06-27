@@ -14,6 +14,7 @@ mkdir -p kzgrs
 wget https://raw.githubusercontent.com/logos-co/nomos-node/master/tests/kzgrs/kzgrs_test_params -O kzgrs/kzgrs_test_params
 pre-commit install
 (optional) Overwrite default vars from src/env_vars.py via env vars or by adding a .env file
+(optional) python download_nltk_resources.py # Used when CHECK_LOG_ERRORS=True
 pytest
 ```
 

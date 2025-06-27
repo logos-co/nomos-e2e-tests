@@ -105,6 +105,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Apple
+.DS_Store
+
 log/
 kzgrs/
 cluster_config/cfgsync.yaml
