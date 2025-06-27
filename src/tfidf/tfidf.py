@@ -56,7 +56,7 @@ class LogTfidf:
         df.columns = ["d1", "d2"]  # Simplified column naming for clarity
         df = df.sort_values(by="d2", ascending=False)
         pattern = "|".join(keywords)
-        df = df[~((df["d1"].str.contains("INFO")) & (~df["d1"].str.contains(pattern)))]
+        df = df[~((df["d1"].str.contains("INFO|DEBUG|TRACE")) & (~df["d1"].str.contains(pattern)))]
 
         # Normalize and deduplicate
         df["d1_normalized"] = df["d1"].apply(normalize_log_message)
